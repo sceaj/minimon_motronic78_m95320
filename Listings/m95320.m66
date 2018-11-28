@@ -1,0 +1,307 @@
+L166 LINKER/LOCATER V5.29.2.0                                                           11/26/2018  21:27:29  PAGE 1
+
+
+L166 LINKER/LOCATER V5.29.2.0, INVOKED BY:
+C:\KEIL_V5\C166\BIN\L166.EXE .\Objects\m95320.obj TO .\Objects\m95320.bin PRINT (.\Listings\m95320.m66) CLASSES (ICODE (
+>> 0XE000-0XE1FF)) CINITTAB (0X0-0X7FFF) SECTIONS (M95320CD%ICODE (0XE000))
+
+
+CPU TYPE:     C167 or derivative
+CPU MODE:     SEGMENTED
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\m95320.obj (M95320)
+         COMMENT TYPE 128: A166 V5.38.2.0
+
+
+MEMORY MAP OF MODULE:  .\Objects\m95320.bin (M95320)
+
+
+START     STOP      LENGTH    TYPE  RTYP  ALIGN  TGR  GRP  COMB  CLASS   SECTION NAME
+=====================================================================================
+00E000H   00E0CDH   0000CEH   CODE  REL   WORD   ---  ---  PUBL  ICODE   M95320CD
+
+
+
+PUBLIC SYMBOLS OF MODULE:  .\Objects\m95320.bin (M95320)
+
+
+      VALUE       PUBLIC SYMBOL NAME               REP   TGR  CLASS   SECTION
+      =======================================================================
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\m95320.bin (M95320)
+
+      VALUE       TYPE      REP       LENGTH  TGR   SYMBOL NAME
+      =========================================================
+      00FF98H     SYMBOL    SFR       ---     ---   ADCIC
+      00FFA0H     SYMBOL    SFR       ---     ---   ADCON
+      00FF9AH     SYMBOL    SFR       ---     ---   ADEIC
+      00FF0CH     SYMBOL    SFR       ---     ---   BUSCON0
+      00FF14H     SYMBOL    SFR       ---     ---   BUSCON1
+      00FF16H     SYMBOL    SFR       ---     ---   BUSCON2
+      00FF18H     SYMBOL    SFR       ---     ---   BUSCON3
+      00FF1AH     SYMBOL    SFR       ---     ---   BUSCON4
+      00FF10H.1   SYMBOL    SBIT      ---     ---   C
+      00FF78H     SYMBOL    SFR       ---     ---   CC0IC
+      00FF8CH     SYMBOL    SFR       ---     ---   CC10IC
+      00FF8EH     SYMBOL    SFR       ---     ---   CC11IC
+      00FF90H     SYMBOL    SFR       ---     ---   CC12IC
+      00FF92H     SYMBOL    SFR       ---     ---   CC13IC
+      00FF94H     SYMBOL    SFR       ---     ---   CC14IC
+      00FF96H     SYMBOL    SFR       ---     ---   CC15IC
+      00F160H     SYMBOL    ESFR      ---     ---   CC16IC
+      00F162H     SYMBOL    ESFR      ---     ---   CC17IC
+      00F164H     SYMBOL    ESFR      ---     ---   CC18IC
+      00F166H     SYMBOL    ESFR      ---     ---   CC19IC
+      00FF7AH     SYMBOL    SFR       ---     ---   CC1IC
+      00F168H     SYMBOL    ESFR      ---     ---   CC20IC
+      00F16AH     SYMBOL    ESFR      ---     ---   CC21IC
+L166 LINKER/LOCATER V5.29.2.0                                                         11/26/2018  21:27:29  PAGE 2
+
+
+      00F16CH     SYMBOL    ESFR      ---     ---   CC22IC
+      00F16EH     SYMBOL    ESFR      ---     ---   CC23IC
+      00F170H     SYMBOL    ESFR      ---     ---   CC24IC
+      00F172H     SYMBOL    ESFR      ---     ---   CC25IC
+      00F174H     SYMBOL    ESFR      ---     ---   CC26IC
+      00F176H     SYMBOL    ESFR      ---     ---   CC27IC
+      00F178H     SYMBOL    ESFR      ---     ---   CC28IC
+      00F184H     SYMBOL    ESFR      ---     ---   CC29IC
+      00FF7CH     SYMBOL    SFR       ---     ---   CC2IC
+      00F18CH     SYMBOL    ESFR      ---     ---   CC30IC
+      00F194H     SYMBOL    ESFR      ---     ---   CC31IC
+      00FF7EH     SYMBOL    SFR       ---     ---   CC3IC
+      00FF80H     SYMBOL    SFR       ---     ---   CC4IC
+      00FF82H     SYMBOL    SFR       ---     ---   CC5IC
+      00FF84H     SYMBOL    SFR       ---     ---   CC6IC
+      00FF86H     SYMBOL    SFR       ---     ---   CC7IC
+      00FF88H     SYMBOL    SFR       ---     ---   CC8IC
+      00FF8AH     SYMBOL    SFR       ---     ---   CC9IC
+      00FF52H     SYMBOL    SFR       ---     ---   CCM0
+      00FF54H     SYMBOL    SFR       ---     ---   CCM1
+      00FF56H     SYMBOL    SFR       ---     ---   CCM2
+      00FF58H     SYMBOL    SFR       ---     ---   CCM3
+      00FF22H     SYMBOL    SFR       ---     ---   CCM4
+      00FF24H     SYMBOL    SFR       ---     ---   CCM5
+      00FF26H     SYMBOL    SFR       ---     ---   CCM6
+      00FF28H     SYMBOL    SFR       ---     ---   CCM7
+      000006H     SYMBOL    CONST     ---     ---   CMD_GETSTATE
+      000000H     SYMBOL    CONST     ---     ---   CMD_PROGRAM
+      000009H     SYMBOL    CONST     ---     ---   CMD_READ_EEPROM_DATA
+      00FF6AH     SYMBOL    SFR       ---     ---   CRIC
+      00FFC6H     SYMBOL    SFR       ---     ---   DP3
+      00FFCAH     SYMBOL    SFR       ---     ---   DP4
+      00FE06H     SYMBOL    SFR       ---     ---   DPP3
+      00FF10H.4   SYMBOL    SBIT      ---     ---   E
+      000003H     SYMBOL    CONST     ---     ---   EEPROM_READ
+      000005H     SYMBOL    CONST     ---     ---   EEPROM_READ_STATUS
+      000006H     SYMBOL    CONST     ---     ---   EEPROM_WREN
+      000002H     SYMBOL    CONST     ---     ---   EEPROM_WRITE
+      000001H     SYMBOL    CONST     ---     ---   E_UNKNOWN_FC
+      00FF11H.2   SYMBOL    SBIT      ---     ---   HLDEN
+      00FF11H.3   SYMBOL    SBIT      ---     ---   IEN
+      00F1DEH     SYMBOL    ESFR      ---     ---   ISNC
+      00FF0EH     SYMBOL    SFR       ---     ---   MDC
+      00FF0EH.4   SYMBOL    SBIT      ---     ---   MDRIU
+      00FF10H.5   SYMBOL    SBIT      ---     ---   MULIP
+      00FF10H     SYMBOL    SBIT      ---     ---   N
+      00FF1EH     SYMBOL    SFR       ---     ---   ONES
+      00FFC4H     SYMBOL    SFR       ---     ---   P3
+      00FFC8H     SYMBOL    SFR       ---     ---   P4
+      00FFA2H     SYMBOL    SFR       ---     ---   P5
+      00FEC0H     SYMBOL    SFR       ---     ---   PECC0
+      00FEC2H     SYMBOL    SFR       ---     ---   PECC1
+      00FEC4H     SYMBOL    SFR       ---     ---   PECC2
+      00FEC6H     SYMBOL    SFR       ---     ---   PECC3
+      00FEC8H     SYMBOL    SFR       ---     ---   PECC4
+      00FECAH     SYMBOL    SFR       ---     ---   PECC5
+      00FECCH     SYMBOL    SFR       ---     ---   PECC6
+L166 LINKER/LOCATER V5.29.2.0                                                         11/26/2018  21:27:29  PAGE 3
+
+
+      00FECEH     SYMBOL    SFR       ---     ---   PECC7
+      00FF10H     SYMBOL    SFR       ---     ---   PSW
+      00FF30H     SYMBOL    SFR       ---     ---   PWMCON0
+      00FF32H     SYMBOL    SFR       ---     ---   PWMCON1
+      00F17EH     SYMBOL    ESFR      ---     ---   PWMIC
+      00FFB0H     SYMBOL    SFR       ---     ---   S0CON
+      00FF70H     SYMBOL    SFR       ---     ---   S0EIC
+      00FF6EH     SYMBOL    SFR       ---     ---   S0RIC
+      00F19CH     SYMBOL    ESFR      ---     ---   S0TBIC
+      00FF6CH     SYMBOL    SFR       ---     ---   S0TIC
+      00F0B4H     SYMBOL    ESFR      ---     ---   SSCBR
+      00FFB2H     SYMBOL    SFR       ---     ---   SSCCON
+      00FF76H     SYMBOL    SFR       ---     ---   SSCEIC
+      00F0B2H     SYMBOL    ESFR      ---     ---   SSCRB
+      00FF74H     SYMBOL    SFR       ---     ---   SSCRIC
+      00FF74H.7   SYMBOL    SBIT      ---     ---   SSCRIR
+      00F0B0H     SYMBOL    ESFR      ---     ---   SSCTB
+      00FF72H     SYMBOL    SFR       ---     ---   SSCTIC
+      00FF12H     SYMBOL    SFR       ---     ---   SYSCON
+      00F1D0H     SYMBOL    ESFR      ---     ---   SYSCON2
+      00F1D4H     SYMBOL    ESFR      ---     ---   SYSCON3
+      00FF50H     SYMBOL    SFR       ---     ---   T01CON
+      00FF9CH     SYMBOL    SFR       ---     ---   T0IC
+      00FF9EH     SYMBOL    SFR       ---     ---   T1IC
+      00FF40H     SYMBOL    SFR       ---     ---   T2CON
+      00FF60H     SYMBOL    SFR       ---     ---   T2IC
+      00FF42H     SYMBOL    SFR       ---     ---   T3CON
+      00FFC4H.4   SYMBOL    SBIT      ---     ---   T3EUD
+      00FF62H     SYMBOL    SFR       ---     ---   T3IC
+      00FF44H     SYMBOL    SFR       ---     ---   T4CON
+      00FF64H     SYMBOL    SFR       ---     ---   T4IC
+      00FF46H     SYMBOL    SFR       ---     ---   T5CON
+      00FF66H     SYMBOL    SFR       ---     ---   T5IC
+      00FF48H     SYMBOL    SFR       ---     ---   T6CON
+      00FF68H     SYMBOL    SFR       ---     ---   T6IC
+      00FF20H     SYMBOL    SFR       ---     ---   T78CON
+      00F17AH     SYMBOL    ESFR      ---     ---   T7IC
+      00F17CH     SYMBOL    ESFR      ---     ---   T8IC
+      00FFACH     SYMBOL    SFR       ---     ---   TFR
+      00FF10H.6   SYMBOL    SBIT      ---     ---   USR0
+      00FF10H.2   SYMBOL    SBIT      ---     ---   V
+      00FFAEH     SYMBOL    SFR       ---     ---   WDTCON
+      00FF6CH     SYMBOL    SFR       ---     ---   XC2xxxT7IC
+      00FF6EH     SYMBOL    SFR       ---     ---   XC2xxxT8IC
+      00F186H     SYMBOL    ESFR      ---     ---   XP0IC
+      00F18EH     SYMBOL    ESFR      ---     ---   XP1IC
+      00F196H     SYMBOL    ESFR      ---     ---   XP2IC
+      00F19EH     SYMBOL    ESFR      ---     ---   XP3IC
+      00FF10H.3   SYMBOL    SBIT      ---     ---   Z
+      00FF1CH     SYMBOL    SFR       ---     ---   ZEROS
+      000007H     SYMBOL    CONST     ---     ---   _SSCBM
+      00C037H     SYMBOL    CONST     ---     ---   _SSCCON
+      008000H     SYMBOL    CONST     ---     ---   _SSCEN
+      000010H     SYMBOL    CONST     ---     ---   _SSCHB
+      004000H     SYMBOL    CONST     ---     ---   _SSCMS
+      000020H     SYMBOL    CONST     ---     ---   _SSCPH
+
+L166 LINKER/LOCATER V5.29.2.0                                                         11/26/2018  21:27:29  PAGE 4
+
+
+      00E000H     BLOCK     LVL=0     00BEH   ---   M95320DRV
+      00E000H     LINE      ---       ---     ---   #87
+      00E002H     LINE      ---       ---     ---   #88
+      00E004H     LINE      ---       ---     ---   #89
+      00E006H     LINE      ---       ---     ---   #92
+      00E008H     LINE      ---       ---     ---   #93
+      00E00CH     LINE      ---       ---     ---   #94
+      00E010H     LINE      ---       ---     ---   #95
+      00E014H     LINE      ---       ---     ---   #96
+      00E018H     LINE      ---       ---     ---   #97
+      00E01AH     LINE      ---       ---     ---   #118
+      00E01CH     LINE      ---       ---     ---   #119
+      00E01EH     LINE      ---       ---     ---   #122
+      00E020H     LINE      ---       ---     ---   #123
+      00E022H     LINE      ---       ---     ---   #126
+      00E024H     LINE      ---       ---     ---   #127
+      00E026H     LINE      ---       ---     ---   #130
+      00E028H     LINE      ---       ---     ---   #132
+      00E02AH     LINE      ---       ---     ---   #133
+      00E02CH     LINE      ---       ---     ---   #134
+      00E02EH     LINE      ---       ---     ---   #135
+      00E030H     LINE      ---       ---     ---   #137
+      00E032H     LINE      ---       ---     ---   #138
+      00E034H     LINE      ---       ---     ---   #141
+      00E036H     LINE      ---       ---     ---   #142
+      00E038H     LINE      ---       ---     ---   #145
+      00E03CH     LINE      ---       ---     ---   #147
+      00E03EH     LINE      ---       ---     ---   #148
+      00E040H     LINE      ---       ---     ---   #149
+      00E042H     LINE      ---       ---     ---   #151
+      00E044H     LINE      ---       ---     ---   #152
+      00E046H     LINE      ---       ---     ---   #156
+      00E048H     LINE      ---       ---     ---   #158
+      00E04CH     LINE      ---       ---     ---   #160
+      00E050H     LINE      ---       ---     ---   #162
+      00E052H     LINE      ---       ---     ---   #164
+      00E054H     LINE      ---       ---     ---   #165
+      00E058H     LINE      ---       ---     ---   #166
+      00E05AH     LINE      ---       ---     ---   #167
+      00E05CH     LINE      ---       ---     ---   #168
+      00E05EH     LINE      ---       ---     ---   #169
+      00E060H     LINE      ---       ---     ---   #170
+      00E062H     LINE      ---       ---     ---   #173
+      00E064H     LINE      ---       ---     ---   #175
+      00E066H     LINE      ---       ---     ---   #176
+      00E068H     LINE      ---       ---     ---   #189
+      00E06CH     LINE      ---       ---     ---   #190
+      00E06EH     LINE      ---       ---     ---   #193
+      00E070H     LINE      ---       ---     ---   #194
+      00E072H     LINE      ---       ---     ---   #197
+      00E074H     LINE      ---       ---     ---   #198
+      00E076H     LINE      ---       ---     ---   #201
+      00E078H     LINE      ---       ---     ---   #202
+      00E07AH     LINE      ---       ---     ---   #203
+      00E07CH     LINE      ---       ---     ---   #205
+      00E07EH     LINE      ---       ---     ---   #206
+      00E080H     LINE      ---       ---     ---   #210
+L166 LINKER/LOCATER V5.29.2.0                                                         11/26/2018  21:27:29  PAGE 5
+
+
+      00E082H     LINE      ---       ---     ---   #212
+      00E086H     LINE      ---       ---     ---   #214
+      00E08AH     LINE      ---       ---     ---   #216
+      00E08CH     LINE      ---       ---     ---   #218
+      00E08EH     LINE      ---       ---     ---   #219
+      00E092H     LINE      ---       ---     ---   #220
+      00E094H     LINE      ---       ---     ---   #221
+      00E096H     LINE      ---       ---     ---   #222
+      00E098H     LINE      ---       ---     ---   #223
+      00E09AH     LINE      ---       ---     ---   #226
+      00E09CH     LINE      ---       ---     ---   #228
+      00E09EH     LINE      ---       ---     ---   #229
+      00E0A0H     LINE      ---       ---     ---   #238
+      00E0A2H     LINE      ---       ---     ---   #239
+      00E0A4H     LINE      ---       ---     ---   #243
+      00E0A6H     LINE      ---       ---     ---   #244
+      00E0A8H     LINE      ---       ---     ---   #247
+      00E0AAH     LINE      ---       ---     ---   #248
+      00E0ACH     LINE      ---       ---     ---   #249
+      00E0B0H     LINE      ---       ---     ---   #250
+      00E0B2H     LINE      ---       ---     ---   #251
+      00E0B4H     LINE      ---       ---     ---   #254
+      00E0B6H     LINE      ---       ---     ---   #256
+      00E0B8H     LINE      ---       ---     ---   #257
+      00E0BAH     LINE      ---       ---     ---   #261
+      00E0BCH     LINE      ---       ---     ---   #262
+      00E0BAH     SYMBOL    LABEL     ---     ---   CmdC
+      00E0A4H     SYMBOL    LABEL     ---     ---   Read_S
+      00E0A0H     SYMBOL    LABEL     ---     ---   Cmd3
+      00E08CH     SYMBOL    LABEL     ---     ---   SSC_Loop
+      00E068H     SYMBOL    LABEL     ---     ---   Cmd2
+      00E052H     SYMBOL    LABEL     ---     ---   PGM_Loop
+      00E01AH     SYMBOL    LABEL     ---     ---   Cmd1
+      ---         BLOCKEND  LVL=0     ---     ---   
+
+      00E0BEH     BLOCK     LVL=0     0010H   ---   SendRec
+      00E0BEH     LINE      ---       ---     ---   #275
+      00E0C0H     LINE      ---       ---     ---   #276
+      00E0C4H     LINE      ---       ---     ---   #278
+      00E0C8H     LINE      ---       ---     ---   #279
+      00E0CCH     LINE      ---       ---     ---   #280
+      00E0C4H     SYMBOL    LABEL     ---     ---   SendRecSSCWait
+      00E0BEH     SYMBOL    LABEL     ---     ---   SendRecSSC
+      ---         BLOCKEND  LVL=0     ---     ---   
+
+
+
+FUNCTION REGISTER MASKS
+
+
+FUNCTION . . . REG MASK
+=======================
+
+
+******************************************************************************
+* RESTRICTED VERSION WITH 1000H BYTE CODE SIZE LIMIT; USED: 00CEH BYTE ( 5%) *
+******************************************************************************
+L166 LINKER/LOCATER V5.29.2.0                                                         11/26/2018  21:27:29  PAGE 6
+
+
+
+Program Size: data=0(near=0) const=0(near=0) code=206
+L166 RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

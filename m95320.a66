@@ -1,0 +1,301 @@
+;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;    SSC routines for external SPI EEPROM M95320 (32KBit; 4Kx8 Bit)
+;    SW Platform: MiniMon
+;    Author: Jeff Rosen
+;    Date: 17.05.2018
+;    Version: 1.1
+;
+;    This program is free software: you can redistribute it and/or modify
+;    it under the terms of the GNU General Public License as published by
+;    the Free Software Foundation, either version 3 of the License, or
+;    (at your option) any later version.
+;
+;    This program is distributed in the hope that it will be useful,
+;    but WITHOUT ANY WARRANTY; without even the implied warranty of
+;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;    GNU General Public License for more details.
+;
+;    You should have received a copy of the GNU General Public License
+;    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;
+;    Copyright 2018 Jeff Rosen
+;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+$MOD167
+$SEGMENTED                              ; Segemented memory mode
+$CASE                                   ; Symbols case sensitive
+$INCLUDE(REG167.INC)    
+
+ASSUME    DPP3:SYSTEM
+
+;************************ Definition of M95320 ********************************
+EEPROM_READ             EQU 003h
+EEPROM_READ_STATUS      EQU 005h
+EEPROM_WREN             EQU 006h
+EEPROM_WRDI             EQU 004h
+EEPROM_WRITE            EQU 002h
+EEPROM_WRITE_STAT       EQU 001h
+;******************************************************************************
+
+;************************ Definition of Bosch DME 7.8 **************************
+SPI_CS      LIT 'P4.5'                  ; Define SPI memory enable pin
+SPI_CS_PD   LIT 'DP4.5'                 ; Define SPI memory enable pin port direction
+;******************************************************************************
+
+;************************ Definition of SSCCON **************************
+_SSCBM      SET 7 << 0                  ; Data Width Selection: 1...15: 2...16 bits
+_SSCHB      SET 1 << 4                  ; Heading Control: 1: transmit / receive MSB first
+_SSCPH      SET 1 << 5                  ; Clock Phase Control: Latch on leading/ shift on trailing clock edge
+_SSCMS      SET 1 << 14                 ; Master Select: 1: Master
+_SSCEN      SET 1 << 15                 ; SSCEN Enable: 1: Transmission/ reception enabled
+
+_SSCCON     SET _SSCBM | _SSCHB | _SSCPH | _SSCMS | _SSCEN
+;******************************************************************************
+
+;************************ Definition of Minimon Driver **************************
+CMD_PROGRAM             EQU    000h     ; Program Flash
+CMD_ERASE               EQU    001h     ; Erase Flash
+CMD_SETTIMING           EQU    003h     ; Set Timing
+CMD_GETSTATE            EQU    006h     ; Get State
+CMD_READ_EEPROM_STATUS  EQU    008h     ; Read external SPI EEPROM Status Register at SSC Interface
+CMD_READ_EEPROM_DATA    EQU    009h     ; Read external SPI EEPROM at SSC Interface
+CMD_LOCK                EQU    010h     ; Lock Flash bank
+CMD_UNLOCK              EQU    011h     ; Unlock Flash bank
+CMD_PROTECT             EQU    020h     ; Protect entire Flash
+CMD_UNPROTECT           EQU    021h     ; Unprotect Flash
+CMD_BLANKCHECK          EQU    034h     ; OTP/ Flash blankcheck
+CMD_GETID               EQU    035h     ; Get Manufacturer ID/ Device ID
+;CMD_READ_SPI_EEPROM    EQU    036h     ; Read external SPI EEPROM at SSC Interface
+CMD_PROG_BYTE           EQU    00Ah     ; Program Byte
+    
+E_NOERROR               EQU    000h     ; No error
+E_UNKNOWN_FC            EQU    001h     ; Unknown function code
+E_PROG_NO_VPP           EQU    010h     ; No VPP while programming
+E_PROG_FAILED           EQU    011h     ; Programming failed
+E_PROG_VPP_NOT_CONST    EQU    012h     ; VPP not constant while programming
+E_INVALID_BLOCKSIZE     EQU    01Bh     ; Invalid blocksize
+E_INVALID_DEST_ADDR     EQU    01Ch     ; Invalid destination address
+E_ERASE_NO_VPP          EQU    030h     ; No VPP while erasing
+E_ERASE_FAILED          EQU    031h     ; Erasing failed
+E_ERASE_VPP_NOT_CONST   EQU    032h     ; VPP not constant while erasing
+E_INVALID_SECTOR        EQU    033h     ; Invalid sector number
+E_SECTOR_LOCKED         EQU    034h     ; Sector locked
+E_FLASH_PROTECTED       EQU    035h     ; Flash protected
+;******************************************************************************
+
+M95320CD SECTION CODE PUBLIC 'ICODE'
+
+M95320DRV PROC FAR
+
+;******************************************************************************
+;* This driver is written to read and write the 32k bit (4KB) M95320 eeprom
+;* found in the Bosch Motronic 7.8 DME (ECU)
+;*
+;* In order to conserve RAM and avoid colliding with other buffer/code areas
+;* the driver divides the M95320 into 4 1KB pages.  Only a single page can be
+;* worked with at a time. The page buffer is located at 0x00F200.
+;* RAM buffer complete address spaces is 0x00F200 - 0x00F5FF (1024 Bytes)
+;* 
+;******************************************************************************
+
+; Deselect Device
+    BSET  SPI_CS                        ; disable external SPI memory
+    NOP
+    BSET  SPI_CS_PD                     ; set pin direction to output
+
+; Setup the SPI control register SSC
+    EXTR  #1
+    MOV   SSCBR,#0Fh                    ; set SSC baudrate register
+    MOV   SSCCON,#_SSCCON               ; set SSC control register
+    BFLDH P3,#023h,#23h                 ; Set MRST (P3.8) = 1, MTSR (P3.9) = 1, SCLK (P3.13) = 1
+    BFLDH DP3,#023h,#22h                ; Set MRST (P3.8) = input, MTSR (P3.9) = output, SCLK (P3.13) = output
+    NOP                                 ; wait before P3 change
+
+;******************************************************************************
+;* PROGRAM SPI EEPROM
+;*
+;* The RAM buffer (0xF200..0xF5FF) should be loaded with the data to write to the
+;* EEPROM before calling this routine.  The full 1KB buffer need not be populated,
+;* only the bytes that will actually be written to the EEPROM need to put into RAM.
+;* 
+;* The source address of the first byte to be written is determined by taking the 
+;* lower order 10 bits of the EEPROM address (1KB page offset) and adding the base
+;* address of the RAM buffer (0xF200).  The source data is then written to the 
+;* EEPROM using all 12 bits.
+;* 
+;* Parameters:  R9  = number of bytes to write to EEPROM
+;*              R10 = EEPROM address of first byte written 
+;*
+;* Return:      R15 = error code
+;******************************************************************************
+
+Cmd1:
+    CMP   R8,#CMD_PROGRAM
+    JMP   cc_NE,Cmd2
+
+; Select device 
+    BCLR  SPI_CS        
+    NOP
+    
+; Set write enable latch command
+    MOV   R3,#EEPROM_WREN
+    CALLR SendRecSSC
+
+; Deselect device 
+    BSET  SPI_CS        
+; Short delay
+    NOP
+    NOP
+    NOP
+    NOP
+; Select device 
+    BCLR  SPI_CS        
+    NOP
+    
+; Send write command
+    MOV   R3,#EEPROM_WRITE
+    CALLR SendRecSSC
+
+; Address must be an even address
+    AND   R10,#0FFFEh
+; Send Address high byte    
+    MOV   R3,R10
+    ROR   R3,#8
+    CALLR SendRecSSC
+; Send Address low byte
+    MOV   R3,R10
+    CALLR SendRecSSC
+
+; Setup for entry to Send-Receive loop
+; R5 holds the RAM buffer address
+    MOV   R5,R10
+; Break the EEPROM address space into 1KB pages
+    AND   R5,#003FFh                    ; remove the 2 high-bits and ensure even address.
+; The RAM buffer is always 0xF200..0xF5FF
+    ADDC  R5,#0F200h                    ; load RAM buffer start address
+; Initial decrement of counter
+    SUB   R9,#1
+PGM_Loop:
+    NOP
+    EXTS  #0,#1
+    MOV   RL3,[R5]
+    CALLR SendRecSSC                    ; send data byte
+    ADD   R5,#1                         ; increment RAM buffer address
+    CMPD1 R9,#0                         ; compare w/ 0 and decrement
+    JMPR  cc_ugt,PGM_Loop
+
+; Deselect device 
+    BSET  SPI_CS        
+
+    MOV   R15,#0                        ; return error message "program successful"
+    RETS
+
+;******************************************************************************
+;* READ SPI EEPROM 
+;*
+;* Parameters: R9  = number of bytes to be read from EEPROM
+;*             R10 = EEPROM start address of first byte read
+;*
+;* Return:     R15 = error code
+;*
+;******************************************************************************
+
+Cmd2:
+    CMP   R8,#CMD_READ_EEPROM_DATA
+    JMP   cc_NE,Cmd3
+
+; Enable external SPI memory 
+    BCLR  SPI_CS        
+    NOP
+    
+; Send read command 
+    MOV   R3,#EEPROM_READ
+    CALLR SendRecSSC
+
+; Send Address high byte    
+    MOV   R3,R10
+    ROR   R3,#8
+    CALLR SendRecSSC
+; Send Address low byte
+    MOV   R3,R10
+    CALLR SendRecSSC
+
+; Setup for entry to Send-Receive loop
+; R5 holds the RAM buffer address
+    MOV   R5,R10
+; Break the EEPROM address space into 1KB pages
+    AND   R5,#003FFh                    ; remove the 2 high-bits.
+; The RAM buffer is always 0xF200..0xF5FF
+    ADDC  R5,#0F200h                    ; load RAM buffer start address
+; Decrement the byte counter
+    SUB   R9,#1
+SSC_Loop:
+    CALLR SendRecSSC                    ; send dummy byte, receive data byte
+    EXTS  #0,#1
+    MOV   [R5],RL4
+    ADD   R5,#1                         ; increment RAM buffer address
+    CMPD1 R9,#0
+    JMPR  cc_ugt, SSC_Loop
+    
+; Disable external SPI memory 
+    BSET  SPI_CS        
+
+    MOV   R15,#0                        ; return error message "read successful"
+    RETS    
+
+;******************************************************************************
+;* Read Status Register
+;*
+;* Return:        R9 = status register
+;******************************************************************************
+
+Cmd3:
+    CMP   R8,#CMD_GETSTATE
+    JMP   cc_NE,CmdC
+
+Read_S:
+; Enable external SPI memory 
+    BCLR  SPI_CS    
+    NOP
+        
+; Send read status command 
+    MOV   R3,#EEPROM_READ_STATUS
+    CALLR SendRecSSC
+    MOV   R3,#055h
+    CALLR SendRecSSC                    ; send dummy byte, receive data byte    
+    MOV   R9,R4    
+
+; Disable external SPI memory 
+    BSET  SPI_CS        
+
+    MOV   R15,#0
+    RETS
+
+; Command not known
+CmdC:
+    MOV   R15,#E_UNKNOWN_FC
+    RETS
+
+M95320DRV ENDP
+
+SendRec PROC
+;******************************************************************************
+; Subroutine SendRecSSC
+; Subroutine sends and receives a value via SSC
+; Input: R3 = value to transmit
+; Output: R4 = received value
+;******************************************************************************
+
+SendRecSSC:
+    BCLR  SSCRIR                        ; reset request flag
+    MOV   SSCTB,R3                      ; start transmission
+SendRecSSCWait:
+    JNB   SSCRIR,SendRecSSCWait         ; wait until value is received
+    MOV   R4,SSCRB                      ; return with received value
+    RET
+
+SendRec ENDP
+
+M95320CD ENDS
+
+END

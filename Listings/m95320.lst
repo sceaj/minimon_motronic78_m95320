@@ -1,0 +1,1519 @@
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE     1
+
+
+MACRO ASSEMBLER A166 V5.38.2.0
+OBJECT MODULE PLACED IN .\Objects\m95320.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C166\BIN\A166.EXE m95320.a66 SEGMENTED MOD167 SET(SMALL) DEBUG PRINT(.\Listings\m95320.
+                      lst) OBJECT(.\Objects\m95320.obj) EP
+
+LOC      OBJ             LINE     SOURCE
+
+                            1     ;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                            2     ;    SSC routines for external SPI EEPROM M95320 (32KBit; 4Kx8 Bit)
+                            3     ;    SW Platform: MiniMon
+                            4     ;    Author: Jeff Rosen
+                            5     ;    Date: 17.05.2018
+                            6     ;    Version: 1.1
+                            7     ;    (C) 2018 Jeff Rosen
+                            8     ;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                            9     
+                           10     $MOD167
+                           11     $SEGMENTED                              ; Segemented memory mode
+                           12     $CASE                                   ; Symbols case sensitive
+                           13     $INCLUDE(REG167.INC)    
+                      +1   14     ; (c) Copyright KEIL ELEKTRONIK GmbH.  1993-1999, All rights reserved.
+                      +1   15     ; Register Declarations for C167 Processor
+                      +1   16     
+                      +1   17     ;* A/D Converter *
+ FF98                 +1   18     ADCIC    DEFR   0FF98H
+ FFA0                 +1   19     ADCON    DEFR   0FFA0H
+ FEA0                 +1   20     ADDAT    DEFR   0FEA0H
+ FF9A                 +1   21     ADEIC    DEFR   0FF9AH
+ F0A0                 +1   22     ADDAT2   DEFR   0F0A0H
+ FFA0.7               +1   23     ADST     BIT    ADCON.7
+ FFA0.8               +1   24     ADBSY    BIT    ADCON.8
+ FFA0.9               +1   25     ADWR     BIT    ADCON.9
+ FFA0.10              +1   26     ADCIN    BIT    ADCON.10
+ FFA0.11              +1   27     ADCRQ    BIT    ADCON.11
+ FF98.6               +1   28     ADCIE    BIT    ADCIC.6
+ FF98.7               +1   29     ADCIR    BIT    ADCIC.7
+ FF9A.6               +1   30     ADEIE    BIT    ADEIC.6
+ FF9A.7               +1   31     ADEIR    BIT    ADEIC.7
+                      +1   32     
+                      +1   33     ;* Timer 0, Timer 1, Timer 7, Timer 8 *
+ FE80                 +1   34     CC0      DEFR   0FE80H
+ FF78                 +1   35     CC0IC    DEFR   0FF78H
+ FE82                 +1   36     CC1      DEFR   0FE82H
+ FF7A                 +1   37     CC1IC    DEFR   0FF7AH
+ FE84                 +1   38     CC2      DEFR   0FE84H
+ FF7C                 +1   39     CC2IC    DEFR   0FF7CH
+ FE86                 +1   40     CC3      DEFR   0FE86H
+ FF7E                 +1   41     CC3IC    DEFR   0FF7EH
+ FE88                 +1   42     CC4      DEFR   0FE88H
+ FF80                 +1   43     CC4IC    DEFR   0FF80H
+ FE8A                 +1   44     CC5      DEFR   0FE8AH
+ FF82                 +1   45     CC5IC    DEFR   0FF82H
+ FE8C                 +1   46     CC6      DEFR   0FE8CH
+ FF84                 +1   47     CC6IC    DEFR   0FF84H
+ FE8E                 +1   48     CC7      DEFR   0FE8EH
+ FF86                 +1   49     CC7IC    DEFR   0FF86H
+ FE90                 +1   50     CC8      DEFR   0FE90H
+ FF88                 +1   51     CC8IC    DEFR   0FF88H
+ FE92                 +1   52     CC9      DEFR   0FE92H
+ FF8A                 +1   53     CC9IC    DEFR   0FF8AH
+ FE94                 +1   54     CC10     DEFR   0FE94H
+ FF8C                 +1   55     CC10IC   DEFR   0FF8CH
+ FE96                 +1   56     CC11     DEFR   0FE96H
+ FF8E                 +1   57     CC11IC   DEFR   0FF8EH
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE     2
+
+ FE98                 +1   58     CC12     DEFR   0FE98H
+ FF90                 +1   59     CC12IC   DEFR   0FF90H
+ FE9A                 +1   60     CC13     DEFR   0FE9AH
+ FF92                 +1   61     CC13IC   DEFR   0FF92H
+ FE9C                 +1   62     CC14     DEFR   0FE9CH
+ FF94                 +1   63     CC14IC   DEFR   0FF94H
+ FE9E                 +1   64     CC15     DEFR   0FE9EH
+ FF96                 +1   65     CC15IC   DEFR   0FF96H
+ FE60                 +1   66     CC16     DEFR   0FE60H
+ F160                 +1   67     CC16IC   DEFR   0F160H
+ FE62                 +1   68     CC17     DEFR   0FE62H
+ F162                 +1   69     CC17IC   DEFR   0F162H
+ FE64                 +1   70     CC18     DEFR   0FE64H
+ F164                 +1   71     CC18IC   DEFR   0F164H
+ FE66                 +1   72     CC19     DEFR   0FE66H
+ F166                 +1   73     CC19IC   DEFR   0F166H
+ FE68                 +1   74     CC20     DEFR   0FE68H
+ F168                 +1   75     CC20IC   DEFR   0F168H
+ FE6A                 +1   76     CC21     DEFR   0FE6AH
+ F16A                 +1   77     CC21IC   DEFR   0F16AH
+ FE6C                 +1   78     CC22     DEFR   0FE6CH
+ F16C                 +1   79     CC22IC   DEFR   0F16CH
+ FE6E                 +1   80     CC23     DEFR   0FE6EH
+ F16E                 +1   81     CC23IC   DEFR   0F16EH
+ FE70                 +1   82     CC24     DEFR   0FE70H
+ F170                 +1   83     CC24IC   DEFR   0F170H
+ FE72                 +1   84     CC25     DEFR   0FE72H
+ F172                 +1   85     CC25IC   DEFR   0F172H
+ FE74                 +1   86     CC26     DEFR   0FE74H
+ F174                 +1   87     CC26IC   DEFR   0F174H
+ FE76                 +1   88     CC27     DEFR   0FE76H
+ F176                 +1   89     CC27IC   DEFR   0F176H
+ FE78                 +1   90     CC28     DEFR   0FE78H
+ F178                 +1   91     CC28IC   DEFR   0F178H
+ FE7A                 +1   92     CC29     DEFR   0FE7AH
+ F184                 +1   93     CC29IC   DEFR   0F184H
+ FE7C                 +1   94     CC30     DEFR   0FE7CH
+ F18C                 +1   95     CC30IC   DEFR   0F18CH
+ FE7E                 +1   96     CC31     DEFR   0FE7EH
+ F194                 +1   97     CC31IC   DEFR   0F194H
+ FF52                 +1   98     CCM0     DEFR   0FF52H
+ FF54                 +1   99     CCM1     DEFR   0FF54H
+ FF56                 +1  100     CCM2     DEFR   0FF56H
+ FF58                 +1  101     CCM3     DEFR   0FF58H
+ FF22                 +1  102     CCM4     DEFR   0FF22H
+ FF24                 +1  103     CCM5     DEFR   0FF24H
+ FF26                 +1  104     CCM6     DEFR   0FF26H
+ FF28                 +1  105     CCM7     DEFR   0FF28H
+ FE50                 +1  106     T0       DEFR   0FE50H
+ FF50                 +1  107     T01CON   DEFR   0FF50H
+ FF9C                 +1  108     T0IC     DEFR   0FF9CH
+ FE54                 +1  109     T0REL    DEFR   0FE54H
+ FE52                 +1  110     T1       DEFR   0FE52H
+ FF9E                 +1  111     T1IC     DEFR   0FF9EH
+ FE56                 +1  112     T1REL    DEFR   0FE56H
+ F050                 +1  113     T7       DEFR   0F050H
+ FF20                 +1  114     T78CON   DEFR   0FF20H
+ F17A                 +1  115     T7IC     DEFR   0F17AH
+ F054                 +1  116     T7REL    DEFR   0F054H
+ F052                 +1  117     T8       DEFR   0F052H
+ F17C                 +1  118     T8IC     DEFR   0F17CH
+ F056                 +1  119     T8REL    DEFR   0F056H
+ FF78.7               +1  120     CC0IR    BIT    CC0IC.7
+ FF78.6               +1  121     CC0IE    BIT    CC0IC.6
+ FF7A.7               +1  122     CC1IR    BIT    CC1IC.7
+ FF7A.6               +1  123     CC1IE    BIT    CC1IC.6
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE     3
+
+ FF7C.7               +1  124     CC2IR    BIT    CC2IC.7
+ FF7C.6               +1  125     CC2IE    BIT    CC2IC.6
+ FF7E.7               +1  126     CC3IR    BIT    CC3IC.7
+ FF7E.6               +1  127     CC3IE    BIT    CC3IC.6
+ FF80.7               +1  128     CC4IR    BIT    CC4IC.7
+ FF80.6               +1  129     CC4IE    BIT    CC4IC.6
+ FF82.7               +1  130     CC5IR    BIT    CC5IC.7
+ FF82.6               +1  131     CC5IE    BIT    CC5IC.6
+ FF84.7               +1  132     CC6IR    BIT    CC6IC.7
+ FF84.6               +1  133     CC6IE    BIT    CC6IC.6
+ FF86.7               +1  134     CC7IR    BIT    CC7IC.7
+ FF86.6               +1  135     CC7IE    BIT    CC7IC.6
+ FF88.7               +1  136     CC8IR    BIT    CC8IC.7
+ FF88.6               +1  137     CC8IE    BIT    CC8IC.6
+ FF8A.7               +1  138     CC9IR    BIT    CC9IC.7
+ FF8A.6               +1  139     CC9IE    BIT    CC9IC.6
+ FF8C.7               +1  140     CC10IR   BIT    CC10IC.7
+ FF8C.6               +1  141     CC10IE   BIT    CC10IC.6
+ FF8E.7               +1  142     CC11IR   BIT    CC11IC.7
+ FF8E.6               +1  143     CC11IE   BIT    CC11IC.6
+ FF90.7               +1  144     CC12IR   BIT    CC12IC.7
+ FF90.6               +1  145     CC12IE   BIT    CC12IC.6
+ FF92.7               +1  146     CC13IR   BIT    CC13IC.7
+ FF92.6               +1  147     CC13IE   BIT    CC13IC.6
+ FF94.7               +1  148     CC14IR   BIT    CC14IC.7
+ FF94.6               +1  149     CC14IE   BIT    CC14IC.6
+ FF96.7               +1  150     CC15IR   BIT    CC15IC.7
+ FF96.6               +1  151     CC15IE   BIT    CC15IC.6
+ F160.7               +1  152     CC16IR   BIT    CC16IC.7
+ F160.6               +1  153     CC16IE   BIT    CC16IC.6
+ F162.7               +1  154     CC17IR   BIT    CC17IC.7
+ F162.6               +1  155     CC17IE   BIT    CC17IC.6
+ F164.7               +1  156     CC18IR   BIT    CC18IC.7
+ F164.6               +1  157     CC18IE   BIT    CC18IC.6
+ F166.7               +1  158     CC19IR   BIT    CC19IC.7
+ F166.6               +1  159     CC19IE   BIT    CC19IC.6
+ F168.7               +1  160     CC20IR   BIT    CC20IC.7
+ F168.6               +1  161     CC20IE   BIT    CC20IC.6
+ F16A.7               +1  162     CC21IR   BIT    CC21IC.7
+ F16A.6               +1  163     CC21IE   BIT    CC21IC.6
+ F16C.7               +1  164     CC22IR   BIT    CC22IC.7
+ F16C.6               +1  165     CC22IE   BIT    CC22IC.6
+ F16E.7               +1  166     CC23IR   BIT    CC23IC.7
+ F16E.6               +1  167     CC23IE   BIT    CC23IC.6
+ F170.7               +1  168     CC24IR   BIT    CC24IC.7
+ F170.6               +1  169     CC24IE   BIT    CC24IC.6
+ F172.7               +1  170     CC25IR   BIT    CC25IC.7
+ F172.6               +1  171     CC25IE   BIT    CC25IC.6
+ F174.7               +1  172     CC26IR   BIT    CC26IC.7
+ F174.6               +1  173     CC26IE   BIT    CC26IC.6
+ F176.7               +1  174     CC27IR   BIT    CC27IC.7
+ F176.6               +1  175     CC27IE   BIT    CC27IC.6
+ F178.7               +1  176     CC28IR   BIT    CC28IC.7
+ F178.6               +1  177     CC28IE   BIT    CC28IC.6
+ F184.7               +1  178     CC29IR   BIT    CC29IC.7
+ F184.6               +1  179     CC29IE   BIT    CC29IC.6
+ F18C.7               +1  180     CC30IR   BIT    CC30IC.7
+ F18C.6               +1  181     CC30IE   BIT    CC30IC.6
+ F194.7               +1  182     CC31IR   BIT    CC31IC.7
+ F194.6               +1  183     CC31IE   BIT    CC31IC.6
+ FF52.3               +1  184     ACC0     BIT    CCM0.3
+ FF52.7               +1  185     ACC1     BIT    CCM0.7
+ FF52.11              +1  186     ACC2     BIT    CCM0.11
+ FF52.15              +1  187     ACC3     BIT    CCM0.15
+ FF54.3               +1  188     ACC4     BIT    CCM1.3
+ FF54.7               +1  189     ACC5     BIT    CCM1.7
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE     4
+
+ FF54.11              +1  190     ACC6     BIT    CCM1.11
+ FF54.15              +1  191     ACC7     BIT    CCM1.15
+ FF56.3               +1  192     ACC8     BIT    CCM2.3
+ FF56.7               +1  193     ACC9     BIT    CCM2.7
+ FF56.11              +1  194     ACC10    BIT    CCM2.11
+ FF56.15              +1  195     ACC11    BIT    CCM2.15
+ FF58.3               +1  196     ACC12    BIT    CCM3.3
+ FF58.7               +1  197     ACC13    BIT    CCM3.7
+ FF58.11              +1  198     ACC14    BIT    CCM3.11
+ FF58.15              +1  199     ACC15    BIT    CCM3.15
+ FF22.3               +1  200     ACC16    BIT    CCM4.3
+ FF22.7               +1  201     ACC17    BIT    CCM4.7
+ FF22.11              +1  202     ACC18    BIT    CCM4.11
+ FF22.15              +1  203     ACC19    BIT    CCM4.15
+ FF24.3               +1  204     ACC20    BIT    CCM5.3
+ FF24.7               +1  205     ACC21    BIT    CCM5.7
+ FF24.11              +1  206     ACC22    BIT    CCM5.11
+ FF24.15              +1  207     ACC23    BIT    CCM5.15
+ FF26.3               +1  208     ACC24    BIT    CCM6.3
+ FF26.7               +1  209     ACC25    BIT    CCM6.7
+ FF26.11              +1  210     ACC26    BIT    CCM6.11
+ FF26.15              +1  211     ACC27    BIT    CCM6.15
+ FF28.3               +1  212     ACC28    BIT    CCM7.3
+ FF28.7               +1  213     ACC29    BIT    CCM7.7
+ FF28.11              +1  214     ACC30    BIT    CCM7.11
+ FF28.15              +1  215     ACC31    BIT    CCM7.15
+ FF9C.6               +1  216     T0IE     BIT    T0IC.6
+ FF9C.7               +1  217     T0IR     BIT    T0IC.7
+ FF50.3               +1  218     T0M      BIT    T01CON.3
+ FF50.6               +1  219     T0R      BIT    T01CON.6
+ FF9E.6               +1  220     T1IE     BIT    T1IC.6
+ FF9E.7               +1  221     T1IR     BIT    T1IC.7
+ FF50.11              +1  222     T1M      BIT    T01CON.11
+ FF50.14              +1  223     T1R      BIT    T01CON.14
+ F17A.6               +1  224     T7IE     BIT    T7IC.6
+ F17A.7               +1  225     T7IR     BIT    T7IC.7
+ FF20.3               +1  226     T7M      BIT    T78CON.3
+ FF20.6               +1  227     T7R      BIT    T78CON.6
+ F17C.6               +1  228     T8IE     BIT    T8IC.6
+ F17C.7               +1  229     T8IR     BIT    T8IC.7
+ FF20.11              +1  230     T8M      BIT    T78CON.11
+ FF20.14              +1  231     T8R      BIT    T78CON.14
+                      +1  232     
+                      +1  233     ;* CPU *
+ FE08                 +1  234     CSP      DEFR   0FE08H
+ FF0E                 +1  235     MDC      DEFR   0FF0EH
+ FF1E                 +1  236     ONES     DEFR   0FF1EH
+ FF10                 +1  237     PSW      DEFR   0FF10H
+ FE12                 +1  238     SP       DEFR   0FE12H
+ FE14                 +1  239     STKOV    DEFR   0FE14H
+ FE16                 +1  240     STKUN    DEFR   0FE16H
+ FF12                 +1  241     SYSCON   DEFR   0FF12H
+ FFAC                 +1  242     TFR      DEFR   0FFACH
+ FF1C                 +1  243     ZEROS    DEFR   0FF1CH
+ FF0C                 +1  244     BUSCON0  DEFR   0FF0CH
+ FF14                 +1  245     BUSCON1  DEFR   0FF14H
+ FF16                 +1  246     BUSCON2  DEFR   0FF16H
+ FF18                 +1  247     BUSCON3  DEFR   0FF18H
+ FF1A                 +1  248     BUSCON4  DEFR   0FF1AH
+ FE18                 +1  249     ADDRSEL1 DEFR   0FE18H
+ FE1A                 +1  250     ADDRSEL2 DEFR   0FE1AH
+ FE1C                 +1  251     ADDRSEL3 DEFR   0FE1CH
+ FE1E                 +1  252     ADDRSEL4 DEFR   0FE1EH
+ FF12.7               +1  253     WRCFG    BIT    SYSCON.7
+ FF12.8               +1  254     CLKEN    BIT    SYSCON.8
+ FF12.9               +1  255     BYTDIS   BIT    SYSCON.9
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE     5
+
+ FF12.10              +1  256     ROMEN    BIT    SYSCON.10
+ FF12.11              +1  257     SGTEN    BIT    SYSCON.11
+ FF12.12              +1  258     ROMS1    BIT    SYSCON.12
+ FF0E.4               +1  259     MDRIU    BIT    MDC.4
+ FF10.0               +1  260     N        BIT    PSW.0
+ FF10.1               +1  261     C        BIT    PSW.1
+ FF10.2               +1  262     V        BIT    PSW.2
+ FF10.3               +1  263     Z        BIT    PSW.3
+ FF10.4               +1  264     E        BIT    PSW.4
+ FF10.5               +1  265     MULIP    BIT    PSW.5
+ FF10.6               +1  266     USR0     BIT    PSW.6
+ FF10.10              +1  267     HLDEN    BIT    PSW.10
+ FF10.11              +1  268     IEN      BIT    PSW.11
+ FF0C.4               +1  269     RWDC0    BIT    BUSCON0.4
+ FF0C.5               +1  270     MTTC0    BIT    BUSCON0.5
+ FF0C.9               +1  271     ALECTL0  BIT    BUSCON0.9
+ FF0C.10              +1  272     BUSACT0  BIT    BUSCON0.10
+ FF0C.12              +1  273     RDYEN0   BIT    BUSCON0.12
+ FF14.4               +1  274     RWDC1    BIT    BUSCON1.4
+ FF14.5               +1  275     MTTC1    BIT    BUSCON1.5
+ FF14.9               +1  276     ALECTL1  BIT    BUSCON1.9
+ FF14.10              +1  277     BUSACT1  BIT    BUSCON1.10
+ FF14.12              +1  278     RDYEN1   BIT    BUSCON1.12
+ FF14.14              +1  279     CSREN1   BIT    BUSCON1.14
+ FF14.15              +1  280     CSWEN1   BIT    BUSCON1.15
+ FF16.4               +1  281     RWDC2    BIT    BUSCON2.4
+ FF16.5               +1  282     MTTC2    BIT    BUSCON2.5
+ FF16.9               +1  283     ALECTL2  BIT    BUSCON2.9
+ FF16.10              +1  284     BUSACT2  BIT    BUSCON2.10
+ FF16.12              +1  285     RDYEN2   BIT    BUSCON2.12
+ FF16.14              +1  286     CSREN2   BIT    BUSCON2.14
+ FF16.15              +1  287     CSWEN2   BIT    BUSCON2.15
+ FF18.4               +1  288     RWDC3    BIT    BUSCON3.4
+ FF18.5               +1  289     MTTC3    BIT    BUSCON3.5
+ FF18.9               +1  290     ALECTL3  BIT    BUSCON3.9
+ FF18.10              +1  291     BUSACT3  BIT    BUSCON3.10
+ FF18.12              +1  292     RDYEN3   BIT    BUSCON3.12
+ FF18.14              +1  293     CSREN3   BIT    BUSCON3.14
+ FF18.15              +1  294     CSWEN3   BIT    BUSCON3.15
+ FF1A.4               +1  295     RWDC4    BIT    BUSCON4.4
+ FF1A.5               +1  296     MTTC4    BIT    BUSCON4.5
+ FF1A.9               +1  297     ALECTL4  BIT    BUSCON4.9
+ FF1A.10              +1  298     BUSACT4  BIT    BUSCON4.10
+ FF1A.12              +1  299     RDYEN4   BIT    BUSCON4.12
+ FF1A.14              +1  300     CSREN4   BIT    BUSCON4.14
+ FF1A.15              +1  301     CSWEN4   BIT    BUSCON4.15
+ FFAC.0               +1  302     ILLBUS   BIT    TFR.0
+ FFAC.1               +1  303     ILLINA   BIT    TFR.1
+ FFAC.2               +1  304     ILLOPA   BIT    TFR.2
+ FFAC.3               +1  305     PRTFLT   BIT    TFR.3
+ FFAC.7               +1  306     UNDOPC   BIT    TFR.7
+ FFAC.13              +1  307     STKUF    BIT    TFR.13
+ FFAC.14              +1  308     STKOF    BIT    TFR.14
+ FFAC.15              +1  309     NMI      BIT    TFR.15
+                      +1  310     
+ F1C0                 +1  311     EXICON   DEFR   0F1C0H
+                      +1  312     
+ F1DE                 +1  313     ISNC     DEFR   0F1DEH
+ F1DE.0               +1  314     RTCIR    BIT    ISNC.0
+ F1DE.1               +1  315     RTCIE    BIT    ISNC.1
+ F1DE.2               +1  316     PLLIR    BIT    ISNC.2
+ F1DE.3               +1  317     PLLIE    BIT    ISNC.3
+                      +1  318     
+                      +1  319     
+                      +1  320     ;* PEC *
+ FEC0                 +1  321     PECC0    DEFR   0FEC0H
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE     6
+
+ FEC2                 +1  322     PECC1    DEFR   0FEC2H
+ FEC4                 +1  323     PECC2    DEFR   0FEC4H
+ FEC6                 +1  324     PECC3    DEFR   0FEC6H
+ FEC8                 +1  325     PECC4    DEFR   0FEC8H
+ FECA                 +1  326     PECC5    DEFR   0FECAH
+ FECC                 +1  327     PECC6    DEFR   0FECCH
+ FECE                 +1  328     PECC7    DEFR   0FECEH
+                      +1  329     
+                      +1  330     ;* I/O Ports *
+ F100                 +1  331     DP0L     DEFR   0F100H
+ F102                 +1  332     DP0H     DEFR   0F102H
+ F104                 +1  333     DP1L     DEFR   0F104H
+ F106                 +1  334     DP1H     DEFR   0F106H
+ FFC2                 +1  335     DP2      DEFR   0FFC2H
+ FFC6                 +1  336     DP3      DEFR   0FFC6H
+ FFCA                 +1  337     DP4      DEFR   0FFCAH
+ FFCE                 +1  338     DP6      DEFR   0FFCEH
+ FFD2                 +1  339     DP7      DEFR   0FFD2H
+ FFD6                 +1  340     DP8      DEFR   0FFD6H
+ FF00                 +1  341     P0L      DEFR   0FF00H
+ FF02                 +1  342     P0H      DEFR   0FF02H
+ FF04                 +1  343     P1L      DEFR   0FF04H
+ FF06                 +1  344     P1H      DEFR   0FF06H
+ FFC0                 +1  345     P2       DEFR   0FFC0H
+ FFC4                 +1  346     P3       DEFR   0FFC4H
+ FFC8                 +1  347     P4       DEFR   0FFC8H
+ FFA2                 +1  348     P5       DEFR   0FFA2H
+ FFCC                 +1  349     P6       DEFR   0FFCCH
+ FFD0                 +1  350     P7       DEFR   0FFD0H
+ FFD4                 +1  351     P8       DEFR   0FFD4H
+ F1C2                 +1  352     ODP2     DEFR   0F1C2H
+ F1C6                 +1  353     ODP3     DEFR   0F1C6H
+ F1CE                 +1  354     ODP6     DEFR   0F1CEH
+ F1D2                 +1  355     ODP7     DEFR   0F1D2H
+ F1D6                 +1  356     ODP8     DEFR   0F1D6H
+ F108                 +1  357     RP0H     DEFR   0F108H
+                      +1  358     
+                      +1  359     ;* Serial Interface *
+ FEB4                 +1  360     S0BG     DEFR   0FEB4H
+ FFB0                 +1  361     S0CON    DEFR   0FFB0H
+ FF70                 +1  362     S0EIC    DEFR   0FF70H
+ FEB2                 +1  363     S0RBUF   DEFR   0FEB2H
+ FF6E                 +1  364     S0RIC    DEFR   0FF6EH
+ FEB0                 +1  365     S0TBUF   DEFR   0FEB0H
+ F19C                 +1  366     S0TBIC   DEFR   0F19CH
+ FF6C                 +1  367     S0TIC    DEFR   0FF6CH
+ FFB0.3               +1  368     S0STP    BIT    S0CON.3
+ FFB0.4               +1  369     S0REN    BIT    S0CON.4
+ FFB0.5               +1  370     S0PEN    BIT    S0CON.5
+ FFB0.6               +1  371     S0FEN    BIT    S0CON.6
+ FFB0.7               +1  372     S0OEN    BIT    S0CON.7
+ FFB0.8               +1  373     S0PE     BIT    S0CON.8
+ FFB0.9               +1  374     S0FE     BIT    S0CON.9
+ FFB0.10              +1  375     S0OE     BIT    S0CON.10
+ FFB0.12              +1  376     S0ODD    BIT    S0CON.12
+ FFB0.13              +1  377     S0BRS    BIT    S0CON.13
+ FFB0.14              +1  378     S0LB     BIT    S0CON.14
+ FFB0.15              +1  379     S0R      BIT    S0CON.15
+ FF6C.6               +1  380     S0TIE    BIT    S0TIC.6
+ FF6C.7               +1  381     S0TIR    BIT    S0TIC.7
+ F19C.6               +1  382     S0TBIE   BIT    S0TBIC.6
+ F19C.7               +1  383     S0TBIR   BIT    S0TBIC.7
+ FF6E.6               +1  384     S0RIE    BIT    S0RIC.6
+ FF6E.7               +1  385     S0RIR    BIT    S0RIC.7
+ FF70.6               +1  386     S0EIE    BIT    S0EIC.6
+ FF70.7               +1  387     S0EIR    BIT    S0EIC.7
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE     7
+
+                      +1  388     
+ FF72                 +1  389     SSCTIC   DEFR   0FF72H
+ FF74                 +1  390     SSCRIC   DEFR   0FF74H
+ FF76                 +1  391     SSCEIC   DEFR   0FF76H
+ F0B0                 +1  392     SSCTB    DEFR   0F0B0H
+ F0B2                 +1  393     SSCRB    DEFR   0F0B2H
+ F0B4                 +1  394     SSCBR    DEFR   0F0B4H
+ FFB2                 +1  395     SSCCON   DEFR   0FFB2H
+ FFB2.4               +1  396     SSCHB    BIT    SSCCON.4
+ FFB2.5               +1  397     SSCPH    BIT    SSCCON.5
+ FFB2.6               +1  398     SSCP0    BIT    SSCCON.6
+ FFB2.8               +1  399     SSCTE    BIT    SSCCON.8
+ FFB2.8               +1  400     SSCTEN   BIT    SSCCON.8
+ FFB2.9               +1  401     SSCRE    BIT    SSCCON.9
+ FFB2.9               +1  402     SSCREN   BIT    SSCCON.9
+ FFB2.10              +1  403     SSCPE    BIT    SSCCON.10
+ FFB2.10              +1  404     SSCPEN   BIT    SSCCON.10
+ FFB2.11              +1  405     SSCBE    BIT    SSCCON.11
+ FFB2.11              +1  406     SSCBEN   BIT    SSCCON.11
+ FFB2.12              +1  407     SSCBSY   BIT    SSCCON.12
+ FFB2.14              +1  408     SSCMS    BIT    SSCCON.14
+ FFB2.15              +1  409     SSCEN    BIT    SSCCON.15
+ FF72.7               +1  410     SSCTIR   BIT    SSCTIC.7
+ FF72.6               +1  411     SSCTIE   BIT    SSCTIC.6
+ FF74.7               +1  412     SSCRIR   BIT    SSCRIC.7
+ FF74.6               +1  413     SSCRIE   BIT    SSCRIC.6
+ FF76.7               +1  414     SSCEIR   BIT    SSCEIC.7
+ FF76.6               +1  415     SSCEIE   BIT    SSCEIC.6
+                      +1  416     
+                      +1  417     ;* GPT1, GPT2 *
+ FE4A                 +1  418     CAPREL   DEFR   0FE4AH
+ FF6A                 +1  419     CRIC     DEFR   0FF6AH
+ FE40                 +1  420     T2       DEFR   0FE40H
+ FF40                 +1  421     T2CON    DEFR   0FF40H
+ FF60                 +1  422     T2IC     DEFR   0FF60H
+ FE42                 +1  423     T3       DEFR   0FE42H
+ FF42                 +1  424     T3CON    DEFR   0FF42H
+ FF62                 +1  425     T3IC     DEFR   0FF62H
+ FE44                 +1  426     T4       DEFR   0FE44H
+ FF44                 +1  427     T4CON    DEFR   0FF44H
+ FF64                 +1  428     T4IC     DEFR   0FF64H
+ FE46                 +1  429     T5       DEFR   0FE46H
+ FF46                 +1  430     T5CON    DEFR   0FF46H
+ FF66                 +1  431     T5IC     DEFR   0FF66H
+ FE48                 +1  432     T6       DEFR   0FE48H
+ FF48                 +1  433     T6CON    DEFR   0FF48H
+ FF68                 +1  434     T6IC     DEFR   0FF68H
+ FEAE                 +1  435     WDT      DEFR   0FEAEH
+ FFAE                 +1  436     WDTCON   DEFR   0FFAEH
+ FF6A.6               +1  437     CRIE     BIT    CRIC.6
+ FF6A.7               +1  438     CRIR     BIT    CRIC.7
+ FF40.6               +1  439     T2R      BIT    T2CON.6
+ FF40.7               +1  440     T2UD     BIT    T2CON.7
+ FF40.8               +1  441     T2UDE    BIT    T2CON.8
+ FF60.6               +1  442     T2IE     BIT    T2IC.6
+ FF60.7               +1  443     T2IR     BIT    T2IC.7
+ FF42.6               +1  444     T3R      BIT    T3CON.6
+ FF42.7               +1  445     T3UD     BIT    T3CON.7
+ FF42.8               +1  446     T3UDE    BIT    T3CON.8
+ FF42.9               +1  447     T3OE     BIT    T3CON.9
+ FF42.10              +1  448     T3OTL    BIT    T3CON.10
+ FF62.6               +1  449     T3IE     BIT    T3IC.6
+ FF62.7               +1  450     T3IR     BIT    T3IC.7
+ FF44.6               +1  451     T4R      BIT    T4CON.6
+ FF44.7               +1  452     T4UD     BIT    T4CON.7
+ FF44.8               +1  453     T4UDE    BIT    T4CON.8
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE     8
+
+ FF64.6               +1  454     T4IE     BIT    T4IC.6
+ FF64.7               +1  455     T4IR     BIT    T4IC.7
+ FF46.6               +1  456     T5R      BIT    T5CON.6
+ FF46.7               +1  457     T5UD     BIT    T5CON.7
+ FF46.8               +1  458     T5UDE    BIT    T5CON.8
+ FF46.14              +1  459     T5CLR    BIT    T5CON.14
+ FF46.15              +1  460     T5SC     BIT    T5CON.15
+ FF66.6               +1  461     T5IE     BIT    T5IC.6
+ FF66.7               +1  462     T5IR     BIT    T5IC.7
+ FF48.6               +1  463     T6R      BIT    T6CON.6
+ FF48.7               +1  464     T6UD     BIT    T6CON.7
+ FF48.8               +1  465     T6UDE    BIT    T6CON.8
+ FF48.9               +1  466     T6OE     BIT    T6CON.9
+ FF48.10              +1  467     T6OTL    BIT    T6CON.10
+ FF48.15              +1  468     T6SR     BIT    T6CON.15
+ FF68.6               +1  469     T6IE     BIT    T6IC.6
+ FF68.7               +1  470     T6IR     BIT    T6IC.7
+ FFC4.0               +1  471     T0IN     BIT    P3.0
+ FFC4.7               +1  472     T2IN     BIT    P3.7
+ FFC4.6               +1  473     T3IN     BIT    P3.6
+ FFC4.5               +1  474     T4IN     BIT    P3.5
+ FFA2.13              +1  475     T5IN     BIT    P5.13;
+ FFA2.12              +1  476     T6IN     BIT    P5.12;
+ FFA2.15              +1  477     T2EUD    BIT    P5.15;
+ FFC4.4               +1  478     T3EUD    BIT    P3.4;
+ FFA2.14              +1  479     T4EUD    BIT    P5.14
+ FFA2.11              +1  480     T5EUD    BIT    P5.11
+ FFC4.4               +1  481     T3EUD    BIT    P3.4
+ FFC4.3               +1  482     T3OUT    BIT    P3.3
+ FFC4.2               +1  483     CAPIN    BIT    P3.2
+ FFC4.1               +1  484     T6OUT    BIT    P3.1
+ FFAE.0               +1  485     WDTIN    BIT    WDTCON.0
+ FFAE.1               +1  486     WDTR     BIT    WDTCON.1
+                      +1  487     
+                      +1  488     ;* PWM Module *
+ FF30                 +1  489     PWMCON0  DEFR   0FF30H
+ FF32                 +1  490     PWMCON1  DEFR   0FF32H
+ FE30                 +1  491     PW0      DEFR   0FE30H
+ FE32                 +1  492     PW1      DEFR   0FE32H
+ FE34                 +1  493     PW2      DEFR   0FE34H
+ FE36                 +1  494     PW3      DEFR   0FE36H
+ F17E                 +1  495     PWMIC    DEFR   0F17EH
+ F030                 +1  496     PT0      DEFR   0F030H
+ F032                 +1  497     PT1      DEFR   0F032H
+ F034                 +1  498     PT2      DEFR   0F034H
+ F036                 +1  499     PT3      DEFR   0F036H
+ F038                 +1  500     PP0      DEFR   0F038H
+ F03A                 +1  501     PP1      DEFR   0F03AH
+ F03C                 +1  502     PP2      DEFR   0F03CH
+ F03E                 +1  503     PP3      DEFR   0F03EH
+ FF30.0               +1  504     PTR0     BIT    PWMCON0.0
+ FF30.1               +1  505     PTR1     BIT    PWMCON0.1
+ FF30.2               +1  506     PTR2     BIT    PWMCON0.2
+ FF30.3               +1  507     PTR3     BIT    PWMCON0.3
+ FF30.4               +1  508     PTI0     BIT    PWMCON0.4
+ FF30.5               +1  509     PTI1     BIT    PWMCON0.5
+ FF30.6               +1  510     PTI2     BIT    PWMCON0.6
+ FF30.7               +1  511     PTI3     BIT    PWMCON0.7
+ FF30.8               +1  512     PIE0     BIT    PWMCON0.8
+ FF30.9               +1  513     PIE1     BIT    PWMCON0.9
+ FF30.10              +1  514     PIE2     BIT    PWMCON0.10
+ FF30.11              +1  515     PIE3     BIT    PWMCON0.11
+ FF30.12              +1  516     PIR0     BIT    PWMCON0.12
+ FF30.13              +1  517     PIR1     BIT    PWMCON0.13
+ FF30.14              +1  518     PIR2     BIT    PWMCON0.14
+ FF30.15              +1  519     PIR3     BIT    PWMCON0.15
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE     9
+
+ FF32.0               +1  520     PEN0     BIT    PWMCON1.0
+ FF32.1               +1  521     PEN1     BIT    PWMCON1.1
+ FF32.2               +1  522     PEN2     BIT    PWMCON1.2
+ FF32.3               +1  523     PEN3     BIT    PWMCON1.3
+ FF32.4               +1  524     PM0      BIT    PWMCON1.4
+ FF32.5               +1  525     PM1      BIT    PWMCON1.5
+ FF32.6               +1  526     PM2      BIT    PWMCON1.6
+ FF32.7               +1  527     PM3      BIT    PWMCON1.7
+ FF32.12              +1  528     PB01     BIT    PWMCON1.12
+ FF32.14              +1  529     PS2      BIT    PWMCON1.14
+ FF32.15              +1  530     PS3      BIT    PWMCON1.15
+ F17E.7               +1  531     PWMIR    BIT    PWMIC.7
+ F17E.6               +1  532     PWMIE    BIT    PWMIC.6
+                      +1  533     
+                      +1  534     ; SYSCON2 and SYSCON3 (only in some devices)
+ F1D0                 +1  535     SYSCON2  DEFR   0F1D0H
+ F1D0.6               +1  536     RCS      BIT    SYSCON2.6
+ F1D0.7               +1  537     SCS      BIT    SYSCON2.7
+ F1D0.15              +1  538     CLKLOCK  BIT    SYSCON2.15
+ F1D4                 +1  539     SYSCON3  DEFR   0F1D4H
+ F1D4.0               +1  540     ADCDIS   BIT    SYSCON3.0
+ F1D4.1               +1  541     ASC0DIS  BIT    SYSCON3.1
+ F1D4.2               +1  542     SSCDIS   BIT    SYSCON3.2
+ F1D4.3               +1  543     GPT1DIS  BIT    SYSCON3.3
+ F1D4.4               +1  544     GPT2DIS  BIT    SYSCON3.4
+ F1D4.5               +1  545     FMDIS    BIT    SYSCON3.5
+ F1D4.6               +1  546     CC1DIS   BIT    SYSCON3.6
+ F1D4.7               +1  547     CC2DIS   BIT    SYSCON3.7
+ F1D4.9               +1  548     PWMDIS   BIT    SYSCON3.9
+ F1D4.10              +1  549     ASC1DIS  BIT    SYSCON3.10
+ F1D4.11              +1  550     I2CDIS   BIT    SYSCON3.11
+ F1D4.13              +1  551     CAN1DIS  BIT    SYSCON3.13
+ F1D4.14              +1  552     CAN2DIS  BIT    SYSCON3.14
+ F1D4.15              +1  553     PCDDIS   BIT    SYSCON3.15
+                      +1  554     
+                      +1  555     ;* X-Peripherals *
+ F186                 +1  556     XP0IC    DEFR   0F186H
+ F18E                 +1  557     XP1IC    DEFR   0F18EH
+ F196                 +1  558     XP2IC    DEFR   0F196H
+ F19E                 +1  559     XP3IC    DEFR   0F19EH
+ F186.7               +1  560     XP0IR    BIT    XP0IC.7
+ F186.6               +1  561     XP0IE    BIT    XP0IC.6
+ F18E.7               +1  562     XP1IR    BIT    XP1IC.7
+ F18E.6               +1  563     XP1IE    BIT    XP1IC.6
+ F196.7               +1  564     XP2IR    BIT    XP2IC.7
+ F196.6               +1  565     XP2IE    BIT    XP2IC.6
+ F19E.7               +1  566     XP3IR    BIT    XP3IC.7
+ F19E.6               +1  567     XP3IE    BIT    XP3IC.6
+                      +1  568     
+                      +1  569     
+                      +1  570     ;Security Level Command Register
+ F0C0                 +1  571     SCUSLC    DEFR 0F0C0H
+ F0C2                 +1  572     SCUSLS    DEFR 0F0C2H
+                      +1  573     
+                      +1  574     ;XE16x/XC2xxx Registers
+ FE1C                 +1  575     XC2xxxGPT12KSCCFG DEFR 0FE1CH
+ FE24                 +1  576     XC2xxxCC2KSCCFG   DEFR 0FE24H
+ FF6C                 +1  577     XC2xxxT7IC        DEFR 0FF6CH
+ FF6E                 +1  578     XC2xxxT8IC        DEFR 0FF6EH
+ FF6C.6               +1  579     XC2xxxT7IE        BIT  XC2xxxT7IC.6
+ FF6C.7               +1  580     XC2xxxT7IR        BIT  XC2xxxT7IC.7
+ FF6E.6               +1  581     XC2xxxT8IE        BIT  XC2xxxT8IC.6
+ FF6E.7               +1  582     XC2xxxT8IR        BIT  XC2xxxT8IC.7
+                          583     
+                          584     ASSUME    DPP3:SYSTEM
+                          585     
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE    10
+
+                          586     ;************************ Definition of M95320 ********************************
+ 0003                     587     EEPROM_READ             EQU 003h
+ 0005                     588     EEPROM_READ_STATUS      EQU 005h
+ 0006                     589     EEPROM_WREN             EQU 006h
+ 0004                     590     EEPROM_WRDI             EQU 004h
+ 0002                     591     EEPROM_WRITE            EQU 002h
+ 0001                     592     EEPROM_WRITE_STAT       EQU 001h
+                          593     ;******************************************************************************
+                          594     
+                          595     ;************************ Definition of Bosch DME 7.8 **************************
+                          596     SPI_CS      LIT 'P4.5'                  ; Define SPI memory enable pin
+                          597     SPI_CS_PD   LIT 'DP4.5'                 ; Define SPI memory enable pin port direction
+                          598     ;******************************************************************************
+                          599     
+                          600     ;************************ Definition of SSCCON **************************
+ 0007                     601     _SSCBM      SET 7 << 0                  ; Data Width Selection: 1...15: 2...16 bits
+ 0010                     602     _SSCHB      SET 1 << 4                  ; Heading Control: 1: transmit / receive MSB f
+                                  irst
+ 0020                     603     _SSCPH      SET 1 << 5                  ; Clock Phase Control: Latch on leading/ shift
+                                   on trailing clock edge
+ 4000                     604     _SSCMS      SET 1 << 14                 ; Master Select: 1: Master
+ 8000                     605     _SSCEN      SET 1 << 15                 ; SSCEN Enable: 1: Transmission/ reception ena
+                                  bled
+                          606     
+ C037                     607     _SSCCON     SET _SSCBM | _SSCHB | _SSCPH | _SSCMS | _SSCEN
+                          608     ;******************************************************************************
+                          609     
+                          610     ;************************ Definition of Minimon Driver **************************
+ 0000                     611     CMD_PROGRAM             EQU    000h     ; Program Flash
+ 0001                     612     CMD_ERASE               EQU    001h     ; Erase Flash
+ 0003                     613     CMD_SETTIMING           EQU    003h     ; Set Timing
+ 0006                     614     CMD_GETSTATE            EQU    006h     ; Get State
+ 0008                     615     CMD_READ_EEPROM_STATUS  EQU    008h     ; Read external SPI EEPROM Status Register at 
+                                  SSC Interface
+ 0009                     616     CMD_READ_EEPROM_DATA    EQU    009h     ; Read external SPI EEPROM at SSC Interface
+ 0010                     617     CMD_LOCK                EQU    010h     ; Lock Flash bank
+ 0011                     618     CMD_UNLOCK              EQU    011h     ; Unlock Flash bank
+ 0020                     619     CMD_PROTECT             EQU    020h     ; Protect entire Flash
+ 0021                     620     CMD_UNPROTECT           EQU    021h     ; Unprotect Flash
+ 0034                     621     CMD_BLANKCHECK          EQU    034h     ; OTP/ Flash blankcheck
+ 0035                     622     CMD_GETID               EQU    035h     ; Get Manufacturer ID/ Device ID
+                          623     ;CMD_READ_SPI_EEPROM    EQU    036h     ; Read external SPI EEPROM at SSC Interface
+ 000A                     624     CMD_PROG_BYTE           EQU    00Ah     ; Program Byte
+                          625         
+ 0000                     626     E_NOERROR               EQU    000h     ; No error
+ 0001                     627     E_UNKNOWN_FC            EQU    001h     ; Unknown function code
+ 0010                     628     E_PROG_NO_VPP           EQU    010h     ; No VPP while programming
+ 0011                     629     E_PROG_FAILED           EQU    011h     ; Programming failed
+ 0012                     630     E_PROG_VPP_NOT_CONST    EQU    012h     ; VPP not constant while programming
+ 001B                     631     E_INVALID_BLOCKSIZE     EQU    01Bh     ; Invalid blocksize
+ 001C                     632     E_INVALID_DEST_ADDR     EQU    01Ch     ; Invalid destination address
+ 0030                     633     E_ERASE_NO_VPP          EQU    030h     ; No VPP while erasing
+ 0031                     634     E_ERASE_FAILED          EQU    031h     ; Erasing failed
+ 0032                     635     E_ERASE_VPP_NOT_CONST   EQU    032h     ; VPP not constant while erasing
+ 0033                     636     E_INVALID_SECTOR        EQU    033h     ; Invalid sector number
+ 0034                     637     E_SECTOR_LOCKED         EQU    034h     ; Sector locked
+ 0035                     638     E_FLASH_PROTECTED       EQU    035h     ; Flash protected
+                          639     ;******************************************************************************
+                          640     
+--------                  641     M95320CD SECTION CODE PUBLIC 'ICODE'
+                          642     
+                          643     M95320DRV PROC FAR
+                          644     
+                          645     ;******************************************************************************
+                          646     ;* This driver is written to read and write the 32k bit (4KB) M95320 eeprom
+                          647     ;* found in the Bosch Motronic 7.8 DME (ECU)
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE    11
+
+                          648     ;*
+                          649     ;* In order to conserve RAM and avoid colliding with other buffer/code areas
+                          650     ;* the driver divides the M95320 into 4 1KB pages.  Only a single page can be
+                          651     ;* worked with at a time. The page buffer is located at 0x00F200.
+                          652     ;* RAM buffer complete address spaces is 0x00F200 - 0x00F5FF (1024 Bytes)
+                          653     ;* 
+                          654     ;******************************************************************************
+                          655     
+                          656     ; Deselect Device
+00000000 5FE4             657         BSET  P4.5                        ; disable external SPI memory
+00000002 CC00             658         NOP
+00000004 5FE5             659         BSET  DP4.5                     ; set pin direction to output
+                          660     
+                          661     ; Setup the SPI control register SSC
+00000006 D180             662         EXTR  #1
+00000008 E65A0F00         663         MOV   SSCBR,#0Fh                    ; set SSC baudrate register
+0000000C E6D937C0         664         MOV   SSCCON,#_SSCCON               ; set SSC control register
+00000010 1AE22323         665         BFLDH P3,#023h,#23h                 ; Set MRST (P3.8) = 1, MTSR (P3.9) = 1, SCLK (
+                                  P3.13) = 1
+00000014 1AE32223         666         BFLDH DP3,#023h,#22h                ; Set MRST (P3.8) = input, MTSR (P3.9) = outpu
+                                  t, SCLK (P3.13) = output
+00000018 CC00             667         NOP                                 ; wait before P3 change
+                          668     
+                          669     ;******************************************************************************
+                          670     ;* PROGRAM SPI EEPROM
+                          671     ;*
+                          672     ;* The RAM buffer (0xF200..0xF5FF) should be loaded with the data to write to the
+                          673     ;* EEPROM before calling this routine.  The full 1KB buffer need not be populated,
+                          674     ;* only the bytes that will actually be written to the EEPROM need to put into RAM.
+                          675     ;* 
+                          676     ;* The source address of the first byte to be written is determined by taking the 
+                          677     ;* lower order 10 bits of the EEPROM address (1KB page offset) and adding the base
+                          678     ;* address of the RAM buffer (0xF200).  The source data is then written to the 
+                          679     ;* EEPROM using all 12 bits.
+                          680     ;* 
+                          681     ;* Parameters:  R9  = number of bytes to write to EEPROM
+                          682     ;*              R10 = EEPROM address of first byte written 
+                          683     ;*
+                          684     ;* Return:      R15 = error code
+                          685     ;******************************************************************************
+                          686     
+                          687     Cmd1:
+0000001A 4880             688         CMP   R8,#CMD_PROGRAM
+0000001C 3D25             689         JMP   cc_NE,Cmd2
+                          690     
+                          691     ; Select device 
+0000001E 5EE4             692         BCLR  P4.5        
+00000020 CC00             693         NOP
+                          694         
+                          695     ; Set write enable latch command
+00000022 E063             696         MOV   R3,#EEPROM_WREN
+00000024 BB4C             697         CALLR SendRecSSC
+                          698     
+                          699     ; Deselect device 
+00000026 5FE4             700         BSET  P4.5        
+                          701     ; Short delay
+00000028 CC00             702         NOP
+0000002A CC00             703         NOP
+0000002C CC00             704         NOP
+0000002E CC00             705         NOP
+                          706     ; Select device 
+00000030 5EE4             707         BCLR  P4.5        
+00000032 CC00             708         NOP
+                          709         
+                          710     ; Send write command
+00000034 E023             711         MOV   R3,#EEPROM_WRITE
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE    12
+
+00000036 BB43             712         CALLR SendRecSSC
+                          713     
+                          714     ; Address must be an even address
+00000038 66FAFEFF         715         AND   R10,#0FFFEh
+                          716     ; Send Address high byte    
+0000003C F03A             717         MOV   R3,R10
+0000003E 3C83             718         ROR   R3,#8
+00000040 BB3E             719         CALLR SendRecSSC
+                          720     ; Send Address low byte
+00000042 F03A             721         MOV   R3,R10
+00000044 BB3C             722         CALLR SendRecSSC
+                          723     
+                          724     ; Setup for entry to Send-Receive loop
+                          725     ; R5 holds the RAM buffer address
+00000046 F05A             726         MOV   R5,R10
+                          727     ; Break the EEPROM address space into 1KB pages
+00000048 66F5FF03         728         AND   R5,#003FFh                    ; remove the 2 high-bits and ensure even addre
+                                  ss.
+                          729     ; The RAM buffer is always 0xF200..0xF5FF
+0000004C 16F500F2         730         ADDC  R5,#0F200h                    ; load RAM buffer start address
+                          731     ; Initial decrement of counter
+00000050 2891             732         SUB   R9,#1
+                          733     PGM_Loop:
+00000052 CC00             734         NOP
+00000054 D7000000         735         EXTS  #0,#1
+00000058 A965             736         MOV   RL3,[R5]
+0000005A BB31             737         CALLR SendRecSSC                    ; send data byte
+0000005C 0851             738         ADD   R5,#1                         ; increment RAM buffer address
+0000005E A009             739         CMPD1 R9,#0                         ; compare w/ 0 and decrement
+00000060 EDF8             740         JMPR  cc_ugt,PGM_Loop
+                          741     
+                          742     ; Deselect device 
+00000062 5FE4             743         BSET  P4.5        
+                          744     
+00000064 E00F             745         MOV   R15,#0                        ; return error message "program successful"
+00000066 DB00             746         RETS
+                          747     
+                          748     ;******************************************************************************
+                          749     ;* READ SPI EEPROM 
+                          750     ;*
+                          751     ;* Parameters: R9  = number of bytes to be read from EEPROM
+                          752     ;*             R10 = EEPROM start address of first byte read
+                          753     ;*
+                          754     ;* Return:     R15 = error code
+                          755     ;*
+                          756     ;******************************************************************************
+                          757     
+                          758     Cmd2:
+00000068 46F80900         759         CMP   R8,#CMD_READ_EEPROM_DATA
+0000006C 3D19             760         JMP   cc_NE,Cmd3
+                          761     
+                          762     ; Enable external SPI memory 
+0000006E 5EE4             763         BCLR  P4.5        
+00000070 CC00             764         NOP
+                          765         
+                          766     ; Send read command 
+00000072 E033             767         MOV   R3,#EEPROM_READ
+00000074 BB24             768         CALLR SendRecSSC
+                          769     
+                          770     ; Send Address high byte    
+00000076 F03A             771         MOV   R3,R10
+00000078 3C83             772         ROR   R3,#8
+0000007A BB21             773         CALLR SendRecSSC
+                          774     ; Send Address low byte
+0000007C F03A             775         MOV   R3,R10
+0000007E BB1F             776         CALLR SendRecSSC
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE    13
+
+                          777     
+                          778     ; Setup for entry to Send-Receive loop
+                          779     ; R5 holds the RAM buffer address
+00000080 F05A             780         MOV   R5,R10
+                          781     ; Break the EEPROM address space into 1KB pages
+00000082 66F5FF03         782         AND   R5,#003FFh                    ; remove the 2 high-bits.
+                          783     ; The RAM buffer is always 0xF200..0xF5FF
+00000086 16F500F2         784         ADDC  R5,#0F200h                    ; load RAM buffer start address
+                          785     ; Decrement the byte counter
+0000008A 2891             786         SUB   R9,#1
+                          787     SSC_Loop:
+0000008C BB18             788         CALLR SendRecSSC                    ; send dummy byte, receive data byte
+0000008E D7000000         789         EXTS  #0,#1
+00000092 B985             790         MOV   [R5],RL4
+00000094 0851             791         ADD   R5,#1                         ; increment RAM buffer address
+00000096 A009             792         CMPD1 R9,#0
+00000098 EDF9             793         JMPR  cc_ugt, SSC_Loop
+                          794         
+                          795     ; Disable external SPI memory 
+0000009A 5FE4             796         BSET  P4.5        
+                          797     
+0000009C E00F             798         MOV   R15,#0                        ; return error message "read successful"
+0000009E DB00             799         RETS    
+                          800     
+                          801     ;******************************************************************************
+                          802     ;* Read Status Register
+                          803     ;*
+                          804     ;* Return:        R9 = status register
+                          805     ;******************************************************************************
+                          806     
+                          807     Cmd3:
+000000A0 4886             808         CMP   R8,#CMD_GETSTATE
+000000A2 3D0B             809         JMP   cc_NE,CmdC
+                          810     
+                          811     Read_S:
+                          812     ; Enable external SPI memory 
+000000A4 5EE4             813         BCLR  P4.5    
+000000A6 CC00             814         NOP
+                          815             
+                          816     ; Send read status command 
+000000A8 E053             817         MOV   R3,#EEPROM_READ_STATUS
+000000AA BB09             818         CALLR SendRecSSC
+000000AC E6F35500         819         MOV   R3,#055h
+000000B0 BB06             820         CALLR SendRecSSC                    ; send dummy byte, receive data byte    
+000000B2 F094             821         MOV   R9,R4    
+                          822     
+                          823     ; Disable external SPI memory 
+000000B4 5FE4             824         BSET  P4.5        
+                          825     
+000000B6 E00F             826         MOV   R15,#0
+000000B8 DB00             827         RETS
+                          828     
+                          829     ; Command not known
+                          830     CmdC:
+000000BA E01F             831         MOV   R15,#E_UNKNOWN_FC
+000000BC DB00             832         RETS
+                          833     
+                          834     M95320DRV ENDP
+                          835     
+                          836     SendRec PROC
+                          837     ;******************************************************************************
+                          838     ; Subroutine SendRecSSC
+                          839     ; Subroutine sends and receives a value via SSC
+                          840     ; Input: R3 = value to transmit
+                          841     ; Output: R4 = received value
+                          842     ;******************************************************************************
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE    14
+
+                          843     
+                          844     SendRecSSC:
+000000BE 7EBA             845         BCLR  SSCRIR                        ; reset request flag
+000000C0 F6F3B0F0         846         MOV   SSCTB,R3                      ; start transmission
+                          847     SendRecSSCWait:
+000000C4 9ABAFE70         848         JNB   SSCRIR,SendRecSSCWait         ; wait until value is received
+000000C8 F2F4B2F0         849         MOV   R4,SSCRB                      ; return with received value
+000000CC CB00             850         RET
+                          851     
+                          852     SendRec ENDP
+                          853     
+--------                  854     M95320CD ENDS
+                          855     
+                          856     END
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE    15
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E                 TYPE   VALUE             I  ATTRIBUTES
+
+ACC0 . . . . . . . . .  BIT    FF52H.3           A  
+ACC1 . . . . . . . . .  BIT    FF52H.7           A  
+ACC10. . . . . . . . .  BIT    FF56H.11          A  
+ACC11. . . . . . . . .  BIT    FF56H.15          A  
+ACC12. . . . . . . . .  BIT    FF58H.3           A  
+ACC13. . . . . . . . .  BIT    FF58H.7           A  
+ACC14. . . . . . . . .  BIT    FF58H.11          A  
+ACC15. . . . . . . . .  BIT    FF58H.15          A  
+ACC16. . . . . . . . .  BIT    FF22H.3           A  
+ACC17. . . . . . . . .  BIT    FF22H.7           A  
+ACC18. . . . . . . . .  BIT    FF22H.11          A  
+ACC19. . . . . . . . .  BIT    FF22H.15          A  
+ACC2 . . . . . . . . .  BIT    FF52H.11          A  
+ACC20. . . . . . . . .  BIT    FF24H.3           A  
+ACC21. . . . . . . . .  BIT    FF24H.7           A  
+ACC22. . . . . . . . .  BIT    FF24H.11          A  
+ACC23. . . . . . . . .  BIT    FF24H.15          A  
+ACC24. . . . . . . . .  BIT    FF26H.3           A  
+ACC25. . . . . . . . .  BIT    FF26H.7           A  
+ACC26. . . . . . . . .  BIT    FF26H.11          A  
+ACC27. . . . . . . . .  BIT    FF26H.15          A  
+ACC28. . . . . . . . .  BIT    FF28H.3           A  
+ACC29. . . . . . . . .  BIT    FF28H.7           A  
+ACC3 . . . . . . . . .  BIT    FF52H.15          A  
+ACC30. . . . . . . . .  BIT    FF28H.11          A  
+ACC31. . . . . . . . .  BIT    FF28H.15          A  
+ACC4 . . . . . . . . .  BIT    FF54H.3           A  
+ACC5 . . . . . . . . .  BIT    FF54H.7           A  
+ACC6 . . . . . . . . .  BIT    FF54H.11          A  
+ACC7 . . . . . . . . .  BIT    FF54H.15          A  
+ACC8 . . . . . . . . .  BIT    FF56H.3           A  
+ACC9 . . . . . . . . .  BIT    FF56H.7           A  
+ADBSY. . . . . . . . .  BIT    FFA0H.8           A  
+ADCDIS . . . . . . . .  BIT    F1D4H.0           A  
+ADCIC. . . . . . . . .  WORD   FF98H             A  SFR
+ADCIE. . . . . . . . .  BIT    FF98H.6           A  
+ADCIN. . . . . . . . .  BIT    FFA0H.10          A  
+ADCIR. . . . . . . . .  BIT    FF98H.7           A  
+ADCON. . . . . . . . .  WORD   FFA0H             A  SFR
+ADCRQ. . . . . . . . .  BIT    FFA0H.11          A  
+ADDAT. . . . . . . . .  WORD   FEA0H             A  SFR
+ADDAT2 . . . . . . . .  WORD   F0A0H             A  ESFR
+ADDRSEL1 . . . . . . .  WORD   FE18H             A  SFR
+ADDRSEL2 . . . . . . .  WORD   FE1AH             A  SFR
+ADDRSEL3 . . . . . . .  WORD   FE1CH             A  SFR
+ADDRSEL4 . . . . . . .  WORD   FE1EH             A  SFR
+ADEIC. . . . . . . . .  WORD   FF9AH             A  SFR
+ADEIE. . . . . . . . .  BIT    FF9AH.6           A  
+ADEIR. . . . . . . . .  BIT    FF9AH.7           A  
+ADST . . . . . . . . .  BIT    FFA0H.7           A  
+ADWR . . . . . . . . .  BIT    FFA0H.9           A  
+ALECTL0. . . . . . . .  BIT    FF0CH.9           A  
+ALECTL1. . . . . . . .  BIT    FF14H.9           A  
+ALECTL2. . . . . . . .  BIT    FF16H.9           A  
+ALECTL3. . . . . . . .  BIT    FF18H.9           A  
+ALECTL4. . . . . . . .  BIT    FF1AH.9           A  
+ASC0DIS. . . . . . . .  BIT    F1D4H.1           A  
+ASC1DIS. . . . . . . .  BIT    F1D4H.10          A  
+BUSACT0. . . . . . . .  BIT    FF0CH.10          A  
+BUSACT1. . . . . . . .  BIT    FF14H.10          A  
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE    16
+
+BUSACT2. . . . . . . .  BIT    FF16H.10          A  
+BUSACT3. . . . . . . .  BIT    FF18H.10          A  
+BUSACT4. . . . . . . .  BIT    FF1AH.10          A  
+BUSCON0. . . . . . . .  WORD   FF0CH             A  SFR
+BUSCON1. . . . . . . .  WORD   FF14H             A  SFR
+BUSCON2. . . . . . . .  WORD   FF16H             A  SFR
+BUSCON3. . . . . . . .  WORD   FF18H             A  SFR
+BUSCON4. . . . . . . .  WORD   FF1AH             A  SFR
+BYTDIS . . . . . . . .  BIT    FF12H.9           A  
+C. . . . . . . . . . .  BIT    FF10H.1           A  
+CAN1DIS. . . . . . . .  BIT    F1D4H.13          A  
+CAN2DIS. . . . . . . .  BIT    F1D4H.14          A  
+CAPIN. . . . . . . . .  BIT    FFC4H.2           A  
+CAPREL . . . . . . . .  WORD   FE4AH             A  SFR
+CC0. . . . . . . . . .  WORD   FE80H             A  SFR
+CC0IC. . . . . . . . .  WORD   FF78H             A  SFR
+CC0IE. . . . . . . . .  BIT    FF78H.6           A  
+CC0IR. . . . . . . . .  BIT    FF78H.7           A  
+CC1. . . . . . . . . .  WORD   FE82H             A  SFR
+CC10 . . . . . . . . .  WORD   FE94H             A  SFR
+CC10IC . . . . . . . .  WORD   FF8CH             A  SFR
+CC10IE . . . . . . . .  BIT    FF8CH.6           A  
+CC10IR . . . . . . . .  BIT    FF8CH.7           A  
+CC11 . . . . . . . . .  WORD   FE96H             A  SFR
+CC11IC . . . . . . . .  WORD   FF8EH             A  SFR
+CC11IE . . . . . . . .  BIT    FF8EH.6           A  
+CC11IR . . . . . . . .  BIT    FF8EH.7           A  
+CC12 . . . . . . . . .  WORD   FE98H             A  SFR
+CC12IC . . . . . . . .  WORD   FF90H             A  SFR
+CC12IE . . . . . . . .  BIT    FF90H.6           A  
+CC12IR . . . . . . . .  BIT    FF90H.7           A  
+CC13 . . . . . . . . .  WORD   FE9AH             A  SFR
+CC13IC . . . . . . . .  WORD   FF92H             A  SFR
+CC13IE . . . . . . . .  BIT    FF92H.6           A  
+CC13IR . . . . . . . .  BIT    FF92H.7           A  
+CC14 . . . . . . . . .  WORD   FE9CH             A  SFR
+CC14IC . . . . . . . .  WORD   FF94H             A  SFR
+CC14IE . . . . . . . .  BIT    FF94H.6           A  
+CC14IR . . . . . . . .  BIT    FF94H.7           A  
+CC15 . . . . . . . . .  WORD   FE9EH             A  SFR
+CC15IC . . . . . . . .  WORD   FF96H             A  SFR
+CC15IE . . . . . . . .  BIT    FF96H.6           A  
+CC15IR . . . . . . . .  BIT    FF96H.7           A  
+CC16 . . . . . . . . .  WORD   FE60H             A  SFR
+CC16IC . . . . . . . .  WORD   F160H             A  ESFR
+CC16IE . . . . . . . .  BIT    F160H.6           A  
+CC16IR . . . . . . . .  BIT    F160H.7           A  
+CC17 . . . . . . . . .  WORD   FE62H             A  SFR
+CC17IC . . . . . . . .  WORD   F162H             A  ESFR
+CC17IE . . . . . . . .  BIT    F162H.6           A  
+CC17IR . . . . . . . .  BIT    F162H.7           A  
+CC18 . . . . . . . . .  WORD   FE64H             A  SFR
+CC18IC . . . . . . . .  WORD   F164H             A  ESFR
+CC18IE . . . . . . . .  BIT    F164H.6           A  
+CC18IR . . . . . . . .  BIT    F164H.7           A  
+CC19 . . . . . . . . .  WORD   FE66H             A  SFR
+CC19IC . . . . . . . .  WORD   F166H             A  ESFR
+CC19IE . . . . . . . .  BIT    F166H.6           A  
+CC19IR . . . . . . . .  BIT    F166H.7           A  
+CC1DIS . . . . . . . .  BIT    F1D4H.6           A  
+CC1IC. . . . . . . . .  WORD   FF7AH             A  SFR
+CC1IE. . . . . . . . .  BIT    FF7AH.6           A  
+CC1IR. . . . . . . . .  BIT    FF7AH.7           A  
+CC2. . . . . . . . . .  WORD   FE84H             A  SFR
+CC20 . . . . . . . . .  WORD   FE68H             A  SFR
+CC20IC . . . . . . . .  WORD   F168H             A  ESFR
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE    17
+
+CC20IE . . . . . . . .  BIT    F168H.6           A  
+CC20IR . . . . . . . .  BIT    F168H.7           A  
+CC21 . . . . . . . . .  WORD   FE6AH             A  SFR
+CC21IC . . . . . . . .  WORD   F16AH             A  ESFR
+CC21IE . . . . . . . .  BIT    F16AH.6           A  
+CC21IR . . . . . . . .  BIT    F16AH.7           A  
+CC22 . . . . . . . . .  WORD   FE6CH             A  SFR
+CC22IC . . . . . . . .  WORD   F16CH             A  ESFR
+CC22IE . . . . . . . .  BIT    F16CH.6           A  
+CC22IR . . . . . . . .  BIT    F16CH.7           A  
+CC23 . . . . . . . . .  WORD   FE6EH             A  SFR
+CC23IC . . . . . . . .  WORD   F16EH             A  ESFR
+CC23IE . . . . . . . .  BIT    F16EH.6           A  
+CC23IR . . . . . . . .  BIT    F16EH.7           A  
+CC24 . . . . . . . . .  WORD   FE70H             A  SFR
+CC24IC . . . . . . . .  WORD   F170H             A  ESFR
+CC24IE . . . . . . . .  BIT    F170H.6           A  
+CC24IR . . . . . . . .  BIT    F170H.7           A  
+CC25 . . . . . . . . .  WORD   FE72H             A  SFR
+CC25IC . . . . . . . .  WORD   F172H             A  ESFR
+CC25IE . . . . . . . .  BIT    F172H.6           A  
+CC25IR . . . . . . . .  BIT    F172H.7           A  
+CC26 . . . . . . . . .  WORD   FE74H             A  SFR
+CC26IC . . . . . . . .  WORD   F174H             A  ESFR
+CC26IE . . . . . . . .  BIT    F174H.6           A  
+CC26IR . . . . . . . .  BIT    F174H.7           A  
+CC27 . . . . . . . . .  WORD   FE76H             A  SFR
+CC27IC . . . . . . . .  WORD   F176H             A  ESFR
+CC27IE . . . . . . . .  BIT    F176H.6           A  
+CC27IR . . . . . . . .  BIT    F176H.7           A  
+CC28 . . . . . . . . .  WORD   FE78H             A  SFR
+CC28IC . . . . . . . .  WORD   F178H             A  ESFR
+CC28IE . . . . . . . .  BIT    F178H.6           A  
+CC28IR . . . . . . . .  BIT    F178H.7           A  
+CC29 . . . . . . . . .  WORD   FE7AH             A  SFR
+CC29IC . . . . . . . .  WORD   F184H             A  ESFR
+CC29IE . . . . . . . .  BIT    F184H.6           A  
+CC29IR . . . . . . . .  BIT    F184H.7           A  
+CC2DIS . . . . . . . .  BIT    F1D4H.7           A  
+CC2IC. . . . . . . . .  WORD   FF7CH             A  SFR
+CC2IE. . . . . . . . .  BIT    FF7CH.6           A  
+CC2IR. . . . . . . . .  BIT    FF7CH.7           A  
+CC3. . . . . . . . . .  WORD   FE86H             A  SFR
+CC30 . . . . . . . . .  WORD   FE7CH             A  SFR
+CC30IC . . . . . . . .  WORD   F18CH             A  ESFR
+CC30IE . . . . . . . .  BIT    F18CH.6           A  
+CC30IR . . . . . . . .  BIT    F18CH.7           A  
+CC31 . . . . . . . . .  WORD   FE7EH             A  SFR
+CC31IC . . . . . . . .  WORD   F194H             A  ESFR
+CC31IE . . . . . . . .  BIT    F194H.6           A  
+CC31IR . . . . . . . .  BIT    F194H.7           A  
+CC3IC. . . . . . . . .  WORD   FF7EH             A  SFR
+CC3IE. . . . . . . . .  BIT    FF7EH.6           A  
+CC3IR. . . . . . . . .  BIT    FF7EH.7           A  
+CC4. . . . . . . . . .  WORD   FE88H             A  SFR
+CC4IC. . . . . . . . .  WORD   FF80H             A  SFR
+CC4IE. . . . . . . . .  BIT    FF80H.6           A  
+CC4IR. . . . . . . . .  BIT    FF80H.7           A  
+CC5. . . . . . . . . .  WORD   FE8AH             A  SFR
+CC5IC. . . . . . . . .  WORD   FF82H             A  SFR
+CC5IE. . . . . . . . .  BIT    FF82H.6           A  
+CC5IR. . . . . . . . .  BIT    FF82H.7           A  
+CC6. . . . . . . . . .  WORD   FE8CH             A  SFR
+CC6IC. . . . . . . . .  WORD   FF84H             A  SFR
+CC6IE. . . . . . . . .  BIT    FF84H.6           A  
+CC6IR. . . . . . . . .  BIT    FF84H.7           A  
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE    18
+
+CC7. . . . . . . . . .  WORD   FE8EH             A  SFR
+CC7IC. . . . . . . . .  WORD   FF86H             A  SFR
+CC7IE. . . . . . . . .  BIT    FF86H.6           A  
+CC7IR. . . . . . . . .  BIT    FF86H.7           A  
+CC8. . . . . . . . . .  WORD   FE90H             A  SFR
+CC8IC. . . . . . . . .  WORD   FF88H             A  SFR
+CC8IE. . . . . . . . .  BIT    FF88H.6           A  
+CC8IR. . . . . . . . .  BIT    FF88H.7           A  
+CC9. . . . . . . . . .  WORD   FE92H             A  SFR
+CC9IC. . . . . . . . .  WORD   FF8AH             A  SFR
+CC9IE. . . . . . . . .  BIT    FF8AH.6           A  
+CC9IR. . . . . . . . .  BIT    FF8AH.7           A  
+CCM0 . . . . . . . . .  WORD   FF52H             A  SFR
+CCM1 . . . . . . . . .  WORD   FF54H             A  SFR
+CCM2 . . . . . . . . .  WORD   FF56H             A  SFR
+CCM3 . . . . . . . . .  WORD   FF58H             A  SFR
+CCM4 . . . . . . . . .  WORD   FF22H             A  SFR
+CCM5 . . . . . . . . .  WORD   FF24H             A  SFR
+CCM6 . . . . . . . . .  WORD   FF26H             A  SFR
+CCM7 . . . . . . . . .  WORD   FF28H             A  SFR
+CLKEN. . . . . . . . .  BIT    FF12H.8           A  
+CLKLOCK. . . . . . . .  BIT    F1D0H.15          A  
+CMD_BLANKCHECK . . . .  DATA8  34H               A  
+CMD_ERASE. . . . . . .  DATA3  1H                A  
+CMD_GETID. . . . . . .  DATA8  35H               A  
+CMD_GETSTATE . . . . .  DATA3  6H                A  
+CMD_LOCK . . . . . . .  DATA8  10H               A  
+CMD_PROGRAM. . . . . .  DATA3  0H                A  
+CMD_PROG_BYTE. . . . .  DATA4  AH                A  
+CMD_PROTECT. . . . . .  DATA8  20H               A  
+CMD_READ_EEPROM_DATA .  DATA4  9H                A  
+CMD_READ_EEPROM_STATUS  DATA4  8H                A  
+CMD_SETTIMING. . . . .  DATA3  3H                A  
+CMD_UNLOCK . . . . . .  DATA8  11H               A  
+CMD_UNPROTECT. . . . .  DATA8  21H               A  
+CRIC . . . . . . . . .  WORD   FF6AH             A  SFR
+CRIE . . . . . . . . .  BIT    FF6AH.6           A  
+CRIR . . . . . . . . .  BIT    FF6AH.7           A  
+CSP. . . . . . . . . .  WORD   FE08H             A  SFR
+CSREN1 . . . . . . . .  BIT    FF14H.14          A  
+CSREN2 . . . . . . . .  BIT    FF16H.14          A  
+CSREN3 . . . . . . . .  BIT    FF18H.14          A  
+CSREN4 . . . . . . . .  BIT    FF1AH.14          A  
+CSWEN1 . . . . . . . .  BIT    FF14H.15          A  
+CSWEN2 . . . . . . . .  BIT    FF16H.15          A  
+CSWEN3 . . . . . . . .  BIT    FF18H.15          A  
+CSWEN4 . . . . . . . .  BIT    FF1AH.15          A  
+Cmd1 . . . . . . . . .  NEAR   1AH               R  SEC=M95320CD
+Cmd2 . . . . . . . . .  NEAR   68H               R  SEC=M95320CD
+Cmd3 . . . . . . . . .  NEAR   A0H               R  SEC=M95320CD
+CmdC . . . . . . . . .  NEAR   BAH               R  SEC=M95320CD
+DP0H . . . . . . . . .  WORD   F102H             A  ESFR
+DP0L . . . . . . . . .  WORD   F100H             A  ESFR
+DP1H . . . . . . . . .  WORD   F106H             A  ESFR
+DP1L . . . . . . . . .  WORD   F104H             A  ESFR
+DP2. . . . . . . . . .  WORD   FFC2H             A  SFR
+DP3. . . . . . . . . .  WORD   FFC6H             A  SFR
+DP4. . . . . . . . . .  WORD   FFCAH             A  SFR
+DP6. . . . . . . . . .  WORD   FFCEH             A  SFR
+DP7. . . . . . . . . .  WORD   FFD2H             A  SFR
+DP8. . . . . . . . . .  WORD   FFD6H             A  SFR
+DPP3 . . . . . . . . .  WORD   1FC0H             A  SFR
+E. . . . . . . . . . .  BIT    FF10H.4           A  
+EEPROM_READ. . . . . .  DATA3  3H                A  
+EEPROM_READ_STATUS . .  DATA3  5H                A  
+EEPROM_WRDI. . . . . .  DATA3  4H                A  
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE    19
+
+EEPROM_WREN. . . . . .  DATA3  6H                A  
+EEPROM_WRITE . . . . .  DATA3  2H                A  
+EEPROM_WRITE_STAT. . .  DATA3  1H                A  
+EXICON . . . . . . . .  WORD   F1C0H             A  ESFR
+E_ERASE_FAILED . . . .  DATA8  31H               A  
+E_ERASE_NO_VPP . . . .  DATA8  30H               A  
+E_ERASE_VPP_NOT_CONST.  DATA8  32H               A  
+E_FLASH_PROTECTED. . .  DATA8  35H               A  
+E_INVALID_BLOCKSIZE. .  DATA8  1BH               A  
+E_INVALID_DEST_ADDR. .  DATA8  1CH               A  
+E_INVALID_SECTOR . . .  DATA8  33H               A  
+E_NOERROR. . . . . . .  DATA3  0H                A  
+E_PROG_FAILED. . . . .  DATA8  11H               A  
+E_PROG_NO_VPP. . . . .  DATA8  10H               A  
+E_PROG_VPP_NOT_CONST .  DATA8  12H               A  
+E_SECTOR_LOCKED. . . .  DATA8  34H               A  
+E_UNKNOWN_FC . . . . .  DATA3  1H                A  
+FMDIS. . . . . . . . .  BIT    F1D4H.5           A  
+GPT1DIS. . . . . . . .  BIT    F1D4H.3           A  
+GPT2DIS. . . . . . . .  BIT    F1D4H.4           A  
+HLDEN. . . . . . . . .  BIT    FF10H.10          A  
+I2CDIS . . . . . . . .  BIT    F1D4H.11          A  
+IEN. . . . . . . . . .  BIT    FF10H.11          A  
+ILLBUS . . . . . . . .  BIT    FFACH.0           A  
+ILLINA . . . . . . . .  BIT    FFACH.1           A  
+ILLOPA . . . . . . . .  BIT    FFACH.2           A  
+ISNC . . . . . . . . .  WORD   F1DEH             A  ESFR
+M95320CD . . . . . . .  ----   ----              R  SECTION
+M95320DRV. . . . . . .  FAR    0H                R  SEC=M95320CD
+MDC. . . . . . . . . .  WORD   FF0EH             A  SFR
+MDRIU. . . . . . . . .  BIT    FF0EH.4           A  
+MTTC0. . . . . . . . .  BIT    FF0CH.5           A  
+MTTC1. . . . . . . . .  BIT    FF14H.5           A  
+MTTC2. . . . . . . . .  BIT    FF16H.5           A  
+MTTC3. . . . . . . . .  BIT    FF18H.5           A  
+MTTC4. . . . . . . . .  BIT    FF1AH.5           A  
+MULIP. . . . . . . . .  BIT    FF10H.5           A  
+N. . . . . . . . . . .  BIT    FF10H.0           A  
+NMI. . . . . . . . . .  BIT    FFACH.15          A  
+ODP2 . . . . . . . . .  WORD   F1C2H             A  ESFR
+ODP3 . . . . . . . . .  WORD   F1C6H             A  ESFR
+ODP6 . . . . . . . . .  WORD   F1CEH             A  ESFR
+ODP7 . . . . . . . . .  WORD   F1D2H             A  ESFR
+ODP8 . . . . . . . . .  WORD   F1D6H             A  ESFR
+ONES . . . . . . . . .  WORD   FF1EH             A  SFR
+P0H. . . . . . . . . .  WORD   FF02H             A  SFR
+P0L. . . . . . . . . .  WORD   FF00H             A  SFR
+P1H. . . . . . . . . .  WORD   FF06H             A  SFR
+P1L. . . . . . . . . .  WORD   FF04H             A  SFR
+P2 . . . . . . . . . .  WORD   FFC0H             A  SFR
+P3 . . . . . . . . . .  WORD   FFC4H             A  SFR
+P4 . . . . . . . . . .  WORD   FFC8H             A  SFR
+P5 . . . . . . . . . .  WORD   FFA2H             A  SFR
+P6 . . . . . . . . . .  WORD   FFCCH             A  SFR
+P7 . . . . . . . . . .  WORD   FFD0H             A  SFR
+P8 . . . . . . . . . .  WORD   FFD4H             A  SFR
+PB01 . . . . . . . . .  BIT    FF32H.12          A  
+PCDDIS . . . . . . . .  BIT    F1D4H.15          A  
+PECC0. . . . . . . . .  WORD   FEC0H             A  SFR
+PECC1. . . . . . . . .  WORD   FEC2H             A  SFR
+PECC2. . . . . . . . .  WORD   FEC4H             A  SFR
+PECC3. . . . . . . . .  WORD   FEC6H             A  SFR
+PECC4. . . . . . . . .  WORD   FEC8H             A  SFR
+PECC5. . . . . . . . .  WORD   FECAH             A  SFR
+PECC6. . . . . . . . .  WORD   FECCH             A  SFR
+PECC7. . . . . . . . .  WORD   FECEH             A  SFR
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE    20
+
+PEN0 . . . . . . . . .  BIT    FF32H.0           A  
+PEN1 . . . . . . . . .  BIT    FF32H.1           A  
+PEN2 . . . . . . . . .  BIT    FF32H.2           A  
+PEN3 . . . . . . . . .  BIT    FF32H.3           A  
+PGM_Loop . . . . . . .  NEAR   52H               R  SEC=M95320CD
+PIE0 . . . . . . . . .  BIT    FF30H.8           A  
+PIE1 . . . . . . . . .  BIT    FF30H.9           A  
+PIE2 . . . . . . . . .  BIT    FF30H.10          A  
+PIE3 . . . . . . . . .  BIT    FF30H.11          A  
+PIR0 . . . . . . . . .  BIT    FF30H.12          A  
+PIR1 . . . . . . . . .  BIT    FF30H.13          A  
+PIR2 . . . . . . . . .  BIT    FF30H.14          A  
+PIR3 . . . . . . . . .  BIT    FF30H.15          A  
+PLLIE. . . . . . . . .  BIT    F1DEH.3           A  
+PLLIR. . . . . . . . .  BIT    F1DEH.2           A  
+PM0. . . . . . . . . .  BIT    FF32H.4           A  
+PM1. . . . . . . . . .  BIT    FF32H.5           A  
+PM2. . . . . . . . . .  BIT    FF32H.6           A  
+PM3. . . . . . . . . .  BIT    FF32H.7           A  
+PP0. . . . . . . . . .  WORD   F038H             A  ESFR
+PP1. . . . . . . . . .  WORD   F03AH             A  ESFR
+PP2. . . . . . . . . .  WORD   F03CH             A  ESFR
+PP3. . . . . . . . . .  WORD   F03EH             A  ESFR
+PRTFLT . . . . . . . .  BIT    FFACH.3           A  
+PS2. . . . . . . . . .  BIT    FF32H.14          A  
+PS3. . . . . . . . . .  BIT    FF32H.15          A  
+PSW. . . . . . . . . .  WORD   FF10H             A  SFR
+PT0. . . . . . . . . .  WORD   F030H             A  ESFR
+PT1. . . . . . . . . .  WORD   F032H             A  ESFR
+PT2. . . . . . . . . .  WORD   F034H             A  ESFR
+PT3. . . . . . . . . .  WORD   F036H             A  ESFR
+PTI0 . . . . . . . . .  BIT    FF30H.4           A  
+PTI1 . . . . . . . . .  BIT    FF30H.5           A  
+PTI2 . . . . . . . . .  BIT    FF30H.6           A  
+PTI3 . . . . . . . . .  BIT    FF30H.7           A  
+PTR0 . . . . . . . . .  BIT    FF30H.0           A  
+PTR1 . . . . . . . . .  BIT    FF30H.1           A  
+PTR2 . . . . . . . . .  BIT    FF30H.2           A  
+PTR3 . . . . . . . . .  BIT    FF30H.3           A  
+PW0. . . . . . . . . .  WORD   FE30H             A  SFR
+PW1. . . . . . . . . .  WORD   FE32H             A  SFR
+PW2. . . . . . . . . .  WORD   FE34H             A  SFR
+PW3. . . . . . . . . .  WORD   FE36H             A  SFR
+PWMCON0. . . . . . . .  WORD   FF30H             A  SFR
+PWMCON1. . . . . . . .  WORD   FF32H             A  SFR
+PWMDIS . . . . . . . .  BIT    F1D4H.9           A  
+PWMIC. . . . . . . . .  WORD   F17EH             A  ESFR
+PWMIE. . . . . . . . .  BIT    F17EH.6           A  
+PWMIR. . . . . . . . .  BIT    F17EH.7           A  
+RCS. . . . . . . . . .  BIT    F1D0H.6           A  
+RDYEN0 . . . . . . . .  BIT    FF0CH.12          A  
+RDYEN1 . . . . . . . .  BIT    FF14H.12          A  
+RDYEN2 . . . . . . . .  BIT    FF16H.12          A  
+RDYEN3 . . . . . . . .  BIT    FF18H.12          A  
+RDYEN4 . . . . . . . .  BIT    FF1AH.12          A  
+ROMEN. . . . . . . . .  BIT    FF12H.10          A  
+ROMS1. . . . . . . . .  BIT    FF12H.12          A  
+RP0H . . . . . . . . .  WORD   F108H             A  ESFR
+RTCIE. . . . . . . . .  BIT    F1DEH.1           A  
+RTCIR. . . . . . . . .  BIT    F1DEH.0           A  
+RWDC0. . . . . . . . .  BIT    FF0CH.4           A  
+RWDC1. . . . . . . . .  BIT    FF14H.4           A  
+RWDC2. . . . . . . . .  BIT    FF16H.4           A  
+RWDC3. . . . . . . . .  BIT    FF18H.4           A  
+RWDC4. . . . . . . . .  BIT    FF1AH.4           A  
+Read_S . . . . . . . .  NEAR   A4H               R  SEC=M95320CD
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE    21
+
+S0BG . . . . . . . . .  WORD   FEB4H             A  SFR
+S0BRS. . . . . . . . .  BIT    FFB0H.13          A  
+S0CON. . . . . . . . .  WORD   FFB0H             A  SFR
+S0EIC. . . . . . . . .  WORD   FF70H             A  SFR
+S0EIE. . . . . . . . .  BIT    FF70H.6           A  
+S0EIR. . . . . . . . .  BIT    FF70H.7           A  
+S0FE . . . . . . . . .  BIT    FFB0H.9           A  
+S0FEN. . . . . . . . .  BIT    FFB0H.6           A  
+S0LB . . . . . . . . .  BIT    FFB0H.14          A  
+S0ODD. . . . . . . . .  BIT    FFB0H.12          A  
+S0OE . . . . . . . . .  BIT    FFB0H.10          A  
+S0OEN. . . . . . . . .  BIT    FFB0H.7           A  
+S0PE . . . . . . . . .  BIT    FFB0H.8           A  
+S0PEN. . . . . . . . .  BIT    FFB0H.5           A  
+S0R. . . . . . . . . .  BIT    FFB0H.15          A  
+S0RBUF . . . . . . . .  WORD   FEB2H             A  SFR
+S0REN. . . . . . . . .  BIT    FFB0H.4           A  
+S0RIC. . . . . . . . .  WORD   FF6EH             A  SFR
+S0RIE. . . . . . . . .  BIT    FF6EH.6           A  
+S0RIR. . . . . . . . .  BIT    FF6EH.7           A  
+S0STP. . . . . . . . .  BIT    FFB0H.3           A  
+S0TBIC . . . . . . . .  WORD   F19CH             A  ESFR
+S0TBIE . . . . . . . .  BIT    F19CH.6           A  
+S0TBIR . . . . . . . .  BIT    F19CH.7           A  
+S0TBUF . . . . . . . .  WORD   FEB0H             A  SFR
+S0TIC. . . . . . . . .  WORD   FF6CH             A  SFR
+S0TIE. . . . . . . . .  BIT    FF6CH.6           A  
+S0TIR. . . . . . . . .  BIT    FF6CH.7           A  
+SCS. . . . . . . . . .  BIT    F1D0H.7           A  
+SCUSLC . . . . . . . .  WORD   F0C0H             A  ESFR
+SCUSLS . . . . . . . .  WORD   F0C2H             A  ESFR
+SGTEN. . . . . . . . .  BIT    FF12H.11          A  
+SP . . . . . . . . . .  WORD   FE12H             A  SFR
+SPI_CS . . . . . . . .  LIT    "P4.5"               
+SPI_CS_PD. . . . . . .  LIT    "DP4.5"              
+SSCBE. . . . . . . . .  BIT    FFB2H.11          A  
+SSCBEN . . . . . . . .  BIT    FFB2H.11          A  
+SSCBR. . . . . . . . .  WORD   F0B4H             A  ESFR
+SSCBSY . . . . . . . .  BIT    FFB2H.12          A  
+SSCCON . . . . . . . .  WORD   FFB2H             A  SFR
+SSCDIS . . . . . . . .  BIT    F1D4H.2           A  
+SSCEIC . . . . . . . .  WORD   FF76H             A  SFR
+SSCEIE . . . . . . . .  BIT    FF76H.6           A  
+SSCEIR . . . . . . . .  BIT    FF76H.7           A  
+SSCEN. . . . . . . . .  BIT    FFB2H.15          A  
+SSCHB. . . . . . . . .  BIT    FFB2H.4           A  
+SSCMS. . . . . . . . .  BIT    FFB2H.14          A  
+SSCP0. . . . . . . . .  BIT    FFB2H.6           A  
+SSCPE. . . . . . . . .  BIT    FFB2H.10          A  
+SSCPEN . . . . . . . .  BIT    FFB2H.10          A  
+SSCPH. . . . . . . . .  BIT    FFB2H.5           A  
+SSCRB. . . . . . . . .  WORD   F0B2H             A  ESFR
+SSCRE. . . . . . . . .  BIT    FFB2H.9           A  
+SSCREN . . . . . . . .  BIT    FFB2H.9           A  
+SSCRIC . . . . . . . .  WORD   FF74H             A  SFR
+SSCRIE . . . . . . . .  BIT    FF74H.6           A  
+SSCRIR . . . . . . . .  BIT    FF74H.7           A  
+SSCTB. . . . . . . . .  WORD   F0B0H             A  ESFR
+SSCTE. . . . . . . . .  BIT    FFB2H.8           A  
+SSCTEN . . . . . . . .  BIT    FFB2H.8           A  
+SSCTIC . . . . . . . .  WORD   FF72H             A  SFR
+SSCTIE . . . . . . . .  BIT    FF72H.6           A  
+SSCTIR . . . . . . . .  BIT    FF72H.7           A  
+SSC_Loop . . . . . . .  NEAR   8CH               R  SEC=M95320CD
+STKOF. . . . . . . . .  BIT    FFACH.14          A  
+STKOV. . . . . . . . .  WORD   FE14H             A  SFR
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE    22
+
+STKUF. . . . . . . . .  BIT    FFACH.13          A  
+STKUN. . . . . . . . .  WORD   FE16H             A  SFR
+SYSCON . . . . . . . .  WORD   FF12H             A  SFR
+SYSCON2. . . . . . . .  WORD   F1D0H             A  ESFR
+SYSCON3. . . . . . . .  WORD   F1D4H             A  ESFR
+SendRec. . . . . . . .  NEAR   BEH               R  SEC=M95320CD
+SendRecSSC . . . . . .  NEAR   BEH               R  SEC=M95320CD
+SendRecSSCWait . . . .  NEAR   C4H               R  SEC=M95320CD
+T0 . . . . . . . . . .  WORD   FE50H             A  SFR
+T01CON . . . . . . . .  WORD   FF50H             A  SFR
+T0IC . . . . . . . . .  WORD   FF9CH             A  SFR
+T0IE . . . . . . . . .  BIT    FF9CH.6           A  
+T0IN . . . . . . . . .  BIT    FFC4H.0           A  
+T0IR . . . . . . . . .  BIT    FF9CH.7           A  
+T0M. . . . . . . . . .  BIT    FF50H.3           A  
+T0R. . . . . . . . . .  BIT    FF50H.6           A  
+T0REL. . . . . . . . .  WORD   FE54H             A  SFR
+T1 . . . . . . . . . .  WORD   FE52H             A  SFR
+T1IC . . . . . . . . .  WORD   FF9EH             A  SFR
+T1IE . . . . . . . . .  BIT    FF9EH.6           A  
+T1IR . . . . . . . . .  BIT    FF9EH.7           A  
+T1M. . . . . . . . . .  BIT    FF50H.11          A  
+T1R. . . . . . . . . .  BIT    FF50H.14          A  
+T1REL. . . . . . . . .  WORD   FE56H             A  SFR
+T2 . . . . . . . . . .  WORD   FE40H             A  SFR
+T2CON. . . . . . . . .  WORD   FF40H             A  SFR
+T2EUD. . . . . . . . .  BIT    FFA2H.15          A  
+T2IC . . . . . . . . .  WORD   FF60H             A  SFR
+T2IE . . . . . . . . .  BIT    FF60H.6           A  
+T2IN . . . . . . . . .  BIT    FFC4H.7           A  
+T2IR . . . . . . . . .  BIT    FF60H.7           A  
+T2R. . . . . . . . . .  BIT    FF40H.6           A  
+T2UD . . . . . . . . .  BIT    FF40H.7           A  
+T2UDE. . . . . . . . .  BIT    FF40H.8           A  
+T3 . . . . . . . . . .  WORD   FE42H             A  SFR
+T3CON. . . . . . . . .  WORD   FF42H             A  SFR
+T3EUD. . . . . . . . .  BIT    FFC4H.4           A  
+T3IC . . . . . . . . .  WORD   FF62H             A  SFR
+T3IE . . . . . . . . .  BIT    FF62H.6           A  
+T3IN . . . . . . . . .  BIT    FFC4H.6           A  
+T3IR . . . . . . . . .  BIT    FF62H.7           A  
+T3OE . . . . . . . . .  BIT    FF42H.9           A  
+T3OTL. . . . . . . . .  BIT    FF42H.10          A  
+T3OUT. . . . . . . . .  BIT    FFC4H.3           A  
+T3R. . . . . . . . . .  BIT    FF42H.6           A  
+T3UD . . . . . . . . .  BIT    FF42H.7           A  
+T3UDE. . . . . . . . .  BIT    FF42H.8           A  
+T4 . . . . . . . . . .  WORD   FE44H             A  SFR
+T4CON. . . . . . . . .  WORD   FF44H             A  SFR
+T4EUD. . . . . . . . .  BIT    FFA2H.14          A  
+T4IC . . . . . . . . .  WORD   FF64H             A  SFR
+T4IE . . . . . . . . .  BIT    FF64H.6           A  
+T4IN . . . . . . . . .  BIT    FFC4H.5           A  
+T4IR . . . . . . . . .  BIT    FF64H.7           A  
+T4R. . . . . . . . . .  BIT    FF44H.6           A  
+T4UD . . . . . . . . .  BIT    FF44H.7           A  
+T4UDE. . . . . . . . .  BIT    FF44H.8           A  
+T5 . . . . . . . . . .  WORD   FE46H             A  SFR
+T5CLR. . . . . . . . .  BIT    FF46H.14          A  
+T5CON. . . . . . . . .  WORD   FF46H             A  SFR
+T5EUD. . . . . . . . .  BIT    FFA2H.11          A  
+T5IC . . . . . . . . .  WORD   FF66H             A  SFR
+T5IE . . . . . . . . .  BIT    FF66H.6           A  
+T5IN . . . . . . . . .  BIT    FFA2H.13          A  
+T5IR . . . . . . . . .  BIT    FF66H.7           A  
+T5R. . . . . . . . . .  BIT    FF46H.6           A  
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE    23
+
+T5SC . . . . . . . . .  BIT    FF46H.15          A  
+T5UD . . . . . . . . .  BIT    FF46H.7           A  
+T5UDE. . . . . . . . .  BIT    FF46H.8           A  
+T6 . . . . . . . . . .  WORD   FE48H             A  SFR
+T6CON. . . . . . . . .  WORD   FF48H             A  SFR
+T6IC . . . . . . . . .  WORD   FF68H             A  SFR
+T6IE . . . . . . . . .  BIT    FF68H.6           A  
+T6IN . . . . . . . . .  BIT    FFA2H.12          A  
+T6IR . . . . . . . . .  BIT    FF68H.7           A  
+T6OE . . . . . . . . .  BIT    FF48H.9           A  
+T6OTL. . . . . . . . .  BIT    FF48H.10          A  
+T6OUT. . . . . . . . .  BIT    FFC4H.1           A  
+T6R. . . . . . . . . .  BIT    FF48H.6           A  
+T6SR . . . . . . . . .  BIT    FF48H.15          A  
+T6UD . . . . . . . . .  BIT    FF48H.7           A  
+T6UDE. . . . . . . . .  BIT    FF48H.8           A  
+T7 . . . . . . . . . .  WORD   F050H             A  ESFR
+T78CON . . . . . . . .  WORD   FF20H             A  SFR
+T7IC . . . . . . . . .  WORD   F17AH             A  ESFR
+T7IE . . . . . . . . .  BIT    F17AH.6           A  
+T7IR . . . . . . . . .  BIT    F17AH.7           A  
+T7M. . . . . . . . . .  BIT    FF20H.3           A  
+T7R. . . . . . . . . .  BIT    FF20H.6           A  
+T7REL. . . . . . . . .  WORD   F054H             A  ESFR
+T8 . . . . . . . . . .  WORD   F052H             A  ESFR
+T8IC . . . . . . . . .  WORD   F17CH             A  ESFR
+T8IE . . . . . . . . .  BIT    F17CH.6           A  
+T8IR . . . . . . . . .  BIT    F17CH.7           A  
+T8M. . . . . . . . . .  BIT    FF20H.11          A  
+T8R. . . . . . . . . .  BIT    FF20H.14          A  
+T8REL. . . . . . . . .  WORD   F056H             A  ESFR
+TFR. . . . . . . . . .  WORD   FFACH             A  SFR
+UNDOPC . . . . . . . .  BIT    FFACH.7           A  
+USR0 . . . . . . . . .  BIT    FF10H.6           A  
+V. . . . . . . . . . .  BIT    FF10H.2           A  
+WDT. . . . . . . . . .  WORD   FEAEH             A  SFR
+WDTCON . . . . . . . .  WORD   FFAEH             A  SFR
+WDTIN. . . . . . . . .  BIT    FFAEH.0           A  
+WDTR . . . . . . . . .  BIT    FFAEH.1           A  
+WRCFG. . . . . . . . .  BIT    FF12H.7           A  
+XC2xxxCC2KSCCFG. . . .  WORD   FE24H             A  SFR
+XC2xxxGPT12KSCCFG. . .  WORD   FE1CH             A  SFR
+XC2xxxT7IC . . . . . .  WORD   FF6CH             A  SFR
+XC2xxxT7IE . . . . . .  BIT    FF6CH.6           A  
+XC2xxxT7IR . . . . . .  BIT    FF6CH.7           A  
+XC2xxxT8IC . . . . . .  WORD   FF6EH             A  SFR
+XC2xxxT8IE . . . . . .  BIT    FF6EH.6           A  
+XC2xxxT8IR . . . . . .  BIT    FF6EH.7           A  
+XP0IC. . . . . . . . .  WORD   F186H             A  ESFR
+XP0IE. . . . . . . . .  BIT    F186H.6           A  
+XP0IR. . . . . . . . .  BIT    F186H.7           A  
+XP1IC. . . . . . . . .  WORD   F18EH             A  ESFR
+XP1IE. . . . . . . . .  BIT    F18EH.6           A  
+XP1IR. . . . . . . . .  BIT    F18EH.7           A  
+XP2IC. . . . . . . . .  WORD   F196H             A  ESFR
+XP2IE. . . . . . . . .  BIT    F196H.6           A  
+XP2IR. . . . . . . . .  BIT    F196H.7           A  
+XP3IC. . . . . . . . .  WORD   F19EH             A  ESFR
+XP3IE. . . . . . . . .  BIT    F19EH.6           A  
+XP3IR. . . . . . . . .  BIT    F19EH.7           A  
+Z. . . . . . . . . . .  BIT    FF10H.3           A  
+ZEROS. . . . . . . . .  WORD   FF1CH             A  SFR
+_SSCBM . . . . . . . .  DATA3  7H                A  
+_SSCCON. . . . . . . .  DATA16 C037H             A  
+_SSCEN . . . . . . . .  DATA16 8000H             A  
+_SSCHB . . . . . . . .  DATA8  10H               A  
+A166 MACRO ASSEMBLER  M95320                                                              11/26/2018 21:27:29 PAGE    24
+
+_SSCMS . . . . . . . .  DATA16 4000H             A  
+_SSCPH . . . . . . . .  DATA8  20H               A  
+
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

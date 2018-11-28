@@ -1,0 +1,4 @@
+".\Objects\m95320.obj" 
+TO ".\Objects\m95320.bin" 
+PRINT(".\Listings\m95320.m66") CLASSES (ICODE (0xE000-0xE1FF)) 
+ CINITTAB (0x0-0x7FFF) SECTIONS ( M95320CD%ICODE (0xE000) ) 
